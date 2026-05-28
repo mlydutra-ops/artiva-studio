@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Artiva FotoPrint - Artiva Studio</title>
+  <link rel="stylesheet" href="artiva-fotoprint.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="panel">
+      <a class="brand" href="../">
+        <img src="../assets/artiva-icone-ui.png" alt="Artiva">
+        <span>artiva studio</span>
+      </a>
+
+      <header class="hero">
+        <span class="eyebrow">Ferramenta beta</span>
+        <h1>Artiva FotoPrint</h1>
+        <p>Monte folhas A4 com PhotoCards, chaveiros acrílicos, Polaroids e layouts personalizados para impressão.</p>
+      </header>
+
+      <section class="section">
+        <h2>Fotos</h2>
+        <label>
+          Enviar fotos
+          <input id="photoFiles" type="file" accept="image/png,image/jpeg,image/webp" multiple>
+          <span class="hint">Carregue uma ou várias fotos. A ferramenta repete conforme a quantidade da grade.</span>
+        </label>
+        <div class="photo-actions">
+          <span class="pill" id="photoCount">0 fotos</span>
+          <button id="clearPhotos" type="button" class="secondary">Limpar</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Layout</h2>
+        <label>
+          Tipo de produto
+          <select id="layoutPreset">
+            <option value="photocard">PhotoCard - 55 x 85 mm</option>
+            <option value="keychain">Chaveiro acrílico - 45 x 60 mm</option>
+            <option value="polaroid">Polaroid - 70 x 90 mm</option>
+            <option value="custom">Personalizado</option>
+          </select>
+        </label>
+        <div class="grid">
+          <label>
+            Largura (mm)
+            <input id="itemW" type="number" min="20" max="140" step="1" value="55">
+          </label>
+          <label>
+            Altura (mm)
+            <input id="itemH" type="number" min="20" max="180" step="1" value="85">
+          </label>
+        </div>
+        <div class="grid">
+          <label>
+            Colunas
+            <input id="cols" type="number" min="1" max="6" step="1" value="3">
+          </label>
+          <label>
+            Linhas
+            <input id="rows" type="number" min="1" max="8" step="1" value="3">
+          </label>
+        </div>
+        <div class="grid">
+          <label>
+            Espaço entre peças (mm)
+            <input id="gap" type="number" min="0" max="15" step=".5" value="4">
+          </label>
+          <label>
+            Margem da folha (mm)
+            <input id="pageMargin" type="number" min="0" max="25" step=".5" value="8">
+          </label>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Guias e corte</h2>
+        <label>
+          Guia visual
+          <select id="guideMode">
+            <option value="dashed">Linha tracejada para tesoura</option>
+            <option value="solid">Linha contínua</option>
+            <option value="corners">Marcas nos cantos</option>
+            <option value="none">Sem guia</option>
+          </select>
+        </label>
+        <div class="grid">
+          <label>
+            Margem de corte (mm)
+            <input id="cutMargin" type="number" min="0" max="8" step=".5" value="1">
+          </label>
+          <label>
+            Arredondar cantos (mm)
+            <input id="radius" type="number" min="0" max="16" step="1" value="4">
+          </label>
+        </div>
+        <label class="check">
+          <input id="showGuides" type="checkbox" checked>
+          Mostrar guias na impressão
+        </label>
+      </section>
+
+      <section class="section">
+        <h2>Exportar</h2>
+        <div class="actions">
+          <button id="renderBtn" type="button">Atualizar prévia</button>
+          <button id="pngBtn" type="button" class="secondary">PNG prévia</button>
+          <button id="svgBtn" type="button" class="secondary">SVG corte</button>
+          <button id="pdfBtn" type="button" class="secondary">PDF comum</button>
+          <button id="cmykBtn" type="button" class="warning">PDF impressão CMYK</button>
+        </div>
+        <div id="status" class="status">Carregue fotos para começar a montar a folha.</div>
+      </section>
+    </aside>
+
+    <main class="preview">
+      <div class="toolbar">
+        <div>
+          <span class="eyebrow">Prévia de produção</span>
+          <h2>Folha A4 FotoPrint</h2>
+          <p id="summary">Nenhuma foto carregada.</p>
+        </div>
+        <a class="help-link" href="../faq.html">Ajuda</a>
+      </div>
+      <div class="sheet-wrap">
+        <canvas id="sheet" width="2480" height="3508"></canvas>
+      </div>
+    </main>
+  </div>
+
+  <script src="artiva-fotoprint.js"></script>
+</body>
+</html>

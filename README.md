@@ -1,14 +1,15 @@
 # Artiva Studio
 
-Primeira versao publica do site da Artiva Studio com landing page e ferramenta beta.
+Primeira versão pública do site da Artiva Studio com landing page e ferramentas beta.
 
 ## Rotas
 
 - `/` - home da Artiva Studio
 - `/ferramentas/gerador-apliques-tubete.html` - Gerador de Apliques para Tubete
+- `/ferramentas/artiva-fotoprint.html` - Artiva FotoPrint para PhotoCards, chaveiros, Polaroids e layouts personalizados
 
-## Publicacao sugerida
+## Publicação sugerida
 
-Publicar a pasta `site` na Vercel como projeto estatico.
+Publicar a pasta `site` na Vercel como projeto estático.
 
-Depois de publicar, conectar o dominio `artivastudio.com.br` no painel da Vercel e aplicar os registros DNS informados pela propria Vercel no Registro.br.
+Depois de publicar, conectar o domínio `artivastudio.com.br` no painel da Vercel e aplicar os registros DNS informados pela própria Vercel no Registro.br.
