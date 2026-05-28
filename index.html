@@ -96,6 +96,13 @@
       box-shadow: none;
     }
 
+    .button.ghost {
+      background: transparent;
+      color: var(--primary);
+      border: 1px solid rgba(123, 97, 255, .25);
+      box-shadow: none;
+    }
+
     main {
       width: min(1120px, calc(100% - 40px));
       margin: 0 auto;
@@ -293,6 +300,230 @@
       line-height: 1.5;
     }
 
+    .section {
+      margin-top: 76px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 18px;
+    }
+
+    .section-head h2 {
+      max-width: 620px;
+      margin: 10px 0 0;
+      color: var(--dark);
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1;
+    }
+
+    .section-head p {
+      max-width: 430px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .workflow {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .step {
+      min-height: 210px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .78);
+    }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      margin-bottom: 22px;
+      border-radius: 8px;
+      background: #f0ecff;
+      color: var(--primary);
+      font-weight: 900;
+    }
+
+    .step h3, .tool-card h3, .plan h3 {
+      margin: 0 0 8px;
+      color: var(--dark);
+      font-size: 20px;
+    }
+
+    .step p, .tool-card p, .plan p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .tool-card {
+      display: grid;
+      gap: 18px;
+      min-height: 240px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .8);
+    }
+
+    .tool-card.active {
+      background:
+        linear-gradient(135deg, rgba(123, 97, 255, .11), rgba(255, 122, 89, .08)),
+        rgba(255, 255, 255, .9);
+      box-shadow: var(--shadow);
+    }
+
+    .tool-badge {
+      width: fit-content;
+      padding: 7px 9px;
+      border-radius: 999px;
+      background: #f0ecff;
+      color: var(--dark);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .tool-badge.soon {
+      background: #fff3ef;
+      color: #884230;
+    }
+
+    .audience {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .audience-panel {
+      padding: 24px;
+      border-radius: 8px;
+      background: var(--dark);
+      color: white;
+    }
+
+    .audience-panel h2 {
+      margin: 14px 0 12px;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1;
+    }
+
+    .audience-panel p {
+      margin: 0;
+      color: rgba(255, 255, 255, .74);
+      line-height: 1.55;
+    }
+
+    .audience-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .audience-item {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .78);
+      color: var(--dark);
+      font-weight: 900;
+    }
+
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .plan {
+      display: grid;
+      gap: 16px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .82);
+    }
+
+    .plan.featured {
+      border-color: rgba(123, 97, 255, .35);
+      box-shadow: var(--shadow);
+    }
+
+    .price {
+      color: var(--dark);
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .price span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .plan ul {
+      display: grid;
+      gap: 10px;
+      padding: 0;
+      margin: 0;
+      list-style: none;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .plan li::before {
+      content: "";
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    .final-cta {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+      padding: 28px;
+      border-radius: 8px;
+      background:
+        linear-gradient(135deg, rgba(123, 97, 255, .18), rgba(255, 122, 89, .12)),
+        white;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .final-cta h2 {
+      margin: 0 0 8px;
+      color: var(--dark);
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1;
+    }
+
+    .final-cta p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
     footer {
       width: min(1120px, calc(100% - 40px));
       margin: 0 auto;
@@ -306,7 +537,8 @@
       nav { display: none; }
       main { padding-top: 30px; }
       .hero { grid-template-columns: 1fr; }
-      .signals, .features { grid-template-columns: 1fr; }
+      .signals, .features, .workflow, .tools-grid, .audience, .audience-list, .plans, .final-cta { grid-template-columns: 1fr; }
+      .section-head { display: grid; align-items: start; }
       .mock-stage { min-height: auto; }
     }
   </style>
@@ -320,6 +552,8 @@
       </a>
       <nav aria-label="Principal">
         <a href="#ferramentas">Ferramentas</a>
+        <a href="#fluxo">Fluxo</a>
+        <a href="#planos">Planos</a>
         <a href="#mvp">MVP</a>
         <a class="button secondary" href="ferramentas/gerador-apliques-tubete.html">Testar gerador</a>
       </nav>
@@ -385,6 +619,151 @@
           <h2>Templates Inteligentes</h2>
           <p>Biblioteca por tema, formato e nicho para acelerar a rotina de personalizacao diaria.</p>
         </article>
+      </section>
+
+      <section class="section" id="fluxo">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Fluxo de criacao</span>
+            <h2>Da ideia ao arquivo pronto para imprimir.</h2>
+          </div>
+          <p>A Artiva nasce para diminuir etapas repetitivas: preencher dados, ajustar medidas, conferir a folha e exportar o material certo para producao.</p>
+        </div>
+        <div class="workflow">
+          <article class="step">
+            <span class="step-number">1</span>
+            <h3>Escolha o produto</h3>
+            <p>Comece por tubete, aplique, mockup ou outro formato de personalizado.</p>
+          </article>
+          <article class="step">
+            <span class="step-number">2</span>
+            <h3>Informe os dados</h3>
+            <p>Nome, idade, tema, cores e frase entram em um fluxo simples e guiado.</p>
+          </article>
+          <article class="step">
+            <span class="step-number">3</span>
+            <h3>Ajuste a producao</h3>
+            <p>Controle margens, grade, corte, proporcao e padrao de impressao.</p>
+          </article>
+          <article class="step">
+            <span class="step-number">4</span>
+            <h3>Exporte e venda</h3>
+            <p>Gere PNG, SVG, pagina de impressao e mockups para divulgar melhor.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Ferramentas Artiva</span>
+            <h2>Um estúdio de automacao para personalizados.</h2>
+          </div>
+          <p>O primeiro modulo ja esta em teste. Os proximos seguem a mesma logica: resolver tarefas reais de atelie, sem complicar o uso.</p>
+        </div>
+        <div class="tools-grid">
+          <article class="tool-card active">
+            <span class="tool-badge">Disponivel para teste</span>
+            <div>
+              <h3>Gerador de Apliques</h3>
+              <p>Monte folhas A4 para tubete com repeticao automatica, nome, idade e SVG de corte.</p>
+            </div>
+            <a class="button" href="ferramentas/gerador-apliques-tubete.html">Abrir ferramenta</a>
+          </article>
+          <article class="tool-card">
+            <span class="tool-badge soon">Em breve</span>
+            <div>
+              <h3>Mockups Automaticos</h3>
+              <p>Aplique artes em produtos como chaveiros, adesivos, ecobags, tubetes e placas MDF.</p>
+            </div>
+            <a class="button ghost" href="#planos">Acompanhar beta</a>
+          </article>
+          <article class="tool-card">
+            <span class="tool-badge soon">Em breve</span>
+            <div>
+              <h3>Templates Inteligentes</h3>
+              <p>Organize modelos por tema, data comemorativa, nicho e formato de producao.</p>
+            </div>
+            <a class="button ghost" href="#planos">Ver roadmap</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="section audience">
+        <div class="audience-panel">
+          <span class="eyebrow">Para quem cria todo dia</span>
+          <h2>Feita para a rotina real de atelies.</h2>
+          <p>A Artiva nao quer ser uma IA generica. O foco e ajudar quem vende, imprime, personaliza, monta mockup e precisa ganhar tempo na producao.</p>
+        </div>
+        <div class="audience-list">
+          <div class="audience-item">Papelaria personalizada</div>
+          <div class="audience-item">Lembrancinhas</div>
+          <div class="audience-item">Topos de bolo</div>
+          <div class="audience-item">Sublimacao</div>
+          <div class="audience-item">Encadernacao</div>
+          <div class="audience-item">Vendas na Shopee</div>
+          <div class="audience-item">Social media criativo</div>
+          <div class="audience-item">Pequenos empreendedores</div>
+        </div>
+      </section>
+
+      <section class="section" id="planos">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">Planos previstos</span>
+            <h2>Comece simples e evolua com o atelie.</h2>
+          </div>
+          <p>Valores finais ainda serao definidos. Esta estrutura orienta o beta e ajuda a validar quais recursos fazem mais diferenca.</p>
+        </div>
+        <div class="plans">
+          <article class="plan">
+            <div>
+              <h3>Starter</h3>
+              <p>Para testar a Artiva e criar os primeiros arquivos.</p>
+            </div>
+            <div class="price">Beta <span>inicial</span></div>
+            <ul>
+              <li>Gerador de apliques</li>
+              <li>Exportacao PNG</li>
+              <li>Pagina de impressao</li>
+              <li>Limite mensal de criacoes</li>
+            </ul>
+          </article>
+          <article class="plan featured">
+            <div>
+              <h3>Pro</h3>
+              <p>Para atelies que produzem personalizados com frequencia.</p>
+            </div>
+            <div class="price">Pro <span>em breve</span></div>
+            <ul>
+              <li>Mockups automaticos</li>
+              <li>Exportacao SVG/PDF</li>
+              <li>Templates premium</li>
+              <li>IA para variacoes de arte</li>
+            </ul>
+          </article>
+          <article class="plan">
+            <div>
+              <h3>Studio</h3>
+              <p>Para negocios com equipe, identidade e automacoes.</p>
+            </div>
+            <div class="price">Studio <span>futuro</span></div>
+            <ul>
+              <li>Multiusuario</li>
+              <li>Biblioteca da marca</li>
+              <li>Integracoes com marketplaces</li>
+              <li>Automacoes de producao</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section final-cta">
+        <div>
+          <h2>Teste a primeira ferramenta da Artiva.</h2>
+          <p>O Gerador de Apliques ja esta publicado para validar o fluxo de criacao, ajuste e exportacao.</p>
+        </div>
+        <a class="button" href="ferramentas/gerador-apliques-tubete.html">Abrir Gerador</a>
       </section>
     </main>
 
