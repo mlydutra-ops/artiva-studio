@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Artiva Studio - Tecnologia criativa para personalizados</title>
-  <meta name="description" content="Artiva Studio e uma plataforma inteligente para criar, personalizar e automatizar artes para atelies criativos.">
+  <meta name="description" content="Artiva Studio é uma plataforma inteligente para criar, personalizar e automatizar artes para ateliês criativos.">
   <style>
     :root {
       --primary: #7b61ff;
@@ -74,6 +74,57 @@
       color: var(--muted);
       font-size: 14px;
       font-weight: 800;
+    }
+
+    .mobile-menu {
+      display: none;
+    }
+
+    .mobile-menu summary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      color: var(--dark);
+      font-weight: 900;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .mobile-menu summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .mobile-links {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      top: 78px;
+      z-index: 20;
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .96);
+      box-shadow: var(--shadow);
+    }
+
+    .mobile-links a {
+      padding: 12px;
+      border-radius: 8px;
+      color: var(--dark);
+      font-weight: 900;
+    }
+
+    .mobile-links a.primary {
+      background: var(--primary);
+      color: white;
+      text-align: center;
     }
 
     .button {
@@ -533,8 +584,9 @@
     }
 
     @media (max-width: 900px) {
-      header { align-items: flex-start; }
+      header { position: relative; align-items: center; }
       nav { display: none; }
+      .mobile-menu { display: block; }
       main { padding-top: 30px; }
       .hero { grid-template-columns: 1fr; }
       .signals, .features, .workflow, .tools-grid, .audience, .audience-list, .plans, .final-cta { grid-template-columns: 1fr; }
@@ -561,6 +613,20 @@
         <a href="#mvp">MVP</a>
         <a class="button secondary" href="ferramentas/gerador-apliques-tubete.html">Testar gerador</a>
       </nav>
+      <details class="mobile-menu">
+        <summary>Menu</summary>
+        <div class="mobile-links">
+          <a href="sobre.html">Sobre</a>
+          <a href="#ferramentas">Ferramentas</a>
+          <a href="loja.html">Loja</a>
+          <a href="tutoriais.html">Tutoriais</a>
+          <a href="faq.html">Ajuda</a>
+          <a href="#fluxo">Fluxo</a>
+          <a href="#planos">Planos</a>
+          <a href="#mvp">MVP</a>
+          <a class="primary" href="ferramentas/gerador-apliques-tubete.html">Testar gerador</a>
+        </div>
+      </details>
     </header>
 
     <main>
@@ -568,14 +634,14 @@
         <div>
           <span class="eyebrow">Beta privado para personalizados</span>
           <h1>Crie. Personalize. Automatize.</h1>
-          <p class="lead">A Artiva Studio esta nascendo para ajudar atelies criativos a gerar artes, montar folhas de producao e preparar arquivos para impressao com menos trabalho manual.</p>
+          <p class="lead">A Artiva Studio está nascendo para ajudar ateliês criativos a gerar artes, montar folhas de produção e preparar arquivos para impressão com menos trabalho manual.</p>
           <div class="actions">
             <a class="button" href="ferramentas/gerador-apliques-tubete.html">Testar Gerador de Apliques</a>
             <a class="button secondary" href="sobre.html">Conhecer a Artiva</a>
           </div>
           <div class="signals">
-            <div class="signal"><strong>Para atelies</strong>Papelaria, tubetes, topos, sublimacao e lembrancinhas.</div>
-            <div class="signal"><strong>Pronto para producao</strong>PNG, pagina de impressao e SVG de corte.</div>
+            <div class="signal"><strong>Para ateliês</strong>Papelaria, tubetes, topos, sublimação e lembrancinhas.</div>
+            <div class="signal"><strong>Pronto para produção</strong>PNG, página de impressão e SVG de corte.</div>
             <div class="signal"><strong>Fluxo guiado</strong>Preencha, ajuste, confira e exporte.</div>
           </div>
         </div>
@@ -597,9 +663,9 @@
                   <span class="tool-line"></span>
                   <span class="tool-line short"></span>
                 </span>
-                <span class="status">16 pecas</span>
+                <span class="status">16 peças</span>
               </div>
-              <div class="canvas-preview" aria-label="Previa visual de folha A4">
+              <div class="canvas-preview" aria-label="Prévia visual de folha A4">
                 <span class="piece"></span><span class="piece"></span><span class="piece"></span><span class="piece"></span>
                 <span class="piece"></span><span class="piece"></span><span class="piece"></span><span class="piece"></span>
                 <span class="piece"></span><span class="piece"></span><span class="piece"></span><span class="piece"></span>
@@ -616,22 +682,22 @@
           <p>Primeira ferramenta pronta para testes: monta folha A4 para tubete com grade, margens, texto e corte.</p>
         </article>
         <article class="feature">
-          <h2>Mockups Automaticos</h2>
-          <p>Proxima etapa: aplicar artes em produtos como tubetes, chaveiros, adesivos, ecobags e placas MDF.</p>
+          <h2>Mockups Automáticos</h2>
+          <p>Próxima etapa: aplicar artes em produtos como tubetes, chaveiros, adesivos, ecobags e placas MDF.</p>
         </article>
         <article class="feature">
           <h2>Templates Inteligentes</h2>
-          <p>Biblioteca por tema, formato e nicho para acelerar a rotina de personalizacao diaria.</p>
+          <p>Biblioteca por tema, formato e nicho para acelerar a rotina de personalização diária.</p>
         </article>
       </section>
 
       <section class="section" id="fluxo">
         <div class="section-head">
           <div>
-            <span class="eyebrow">Fluxo de criacao</span>
+            <span class="eyebrow">Fluxo de criação</span>
             <h2>Da ideia ao arquivo pronto para imprimir.</h2>
           </div>
-          <p>A Artiva nasce para diminuir etapas repetitivas: preencher dados, ajustar medidas, conferir a folha e exportar o material certo para producao.</p>
+          <p>A Artiva nasce para diminuir etapas repetitivas: preencher dados, ajustar medidas, conferir a folha e exportar o material certo para produção.</p>
         </div>
         <div class="workflow">
           <article class="step">
@@ -646,13 +712,13 @@
           </article>
           <article class="step">
             <span class="step-number">3</span>
-            <h3>Ajuste a producao</h3>
-            <p>Controle margens, grade, corte, proporcao e padrao de impressao.</p>
+            <h3>Ajuste a produção</h3>
+            <p>Controle margens, grade, corte, proporção e padrão de impressão.</p>
           </article>
           <article class="step">
             <span class="step-number">4</span>
             <h3>Exporte e venda</h3>
-            <p>Gere PNG, SVG, pagina de impressao e mockups para divulgar melhor.</p>
+            <p>Gere PNG, SVG, página de impressão e mockups para divulgar melhor.</p>
           </article>
         </div>
       </section>
@@ -661,26 +727,26 @@
         <div class="section-head">
           <div>
             <span class="eyebrow">Ferramentas Artiva</span>
-            <h2>Um estúdio de automacao para personalizados.</h2>
+            <h2>Um estúdio de automação para personalizados.</h2>
           </div>
-          <p>O primeiro modulo ja esta em teste. Os proximos seguem a mesma logica: resolver tarefas reais de atelie, sem complicar o uso.</p>
+          <p>O primeiro módulo já está em teste. Os próximos seguem a mesma lógica: resolver tarefas reais de ateliê, sem complicar o uso.</p>
         </div>
         <div class="tools-grid">
           <article class="tool-card active">
-            <span class="tool-badge">Disponivel para teste</span>
+            <span class="tool-badge">Disponível para teste</span>
             <div>
               <h3>Gerador de Apliques</h3>
-              <p>Monte folhas A4 para tubete com repeticao automatica, nome, idade e SVG de corte.</p>
+              <p>Monte folhas A4 para tubete com repetição automática, nome, idade e SVG de corte.</p>
             </div>
             <a class="button" href="ferramentas/gerador-apliques-tubete.html">Abrir ferramenta</a>
           </article>
           <article class="tool-card">
             <span class="tool-badge soon">Em desenvolvimento</span>
             <div>
-              <h3>Gerador de Anuncios e Mockups</h3>
+              <h3>Gerador de Anúncios e Mockups</h3>
               <p>Crie imagens de venda, mockups e textos para Shopee, Instagram e marketplaces.</p>
             </div>
-            <a class="button ghost" href="ferramentas/gerador-anuncios-mockups.html">Ver modulo</a>
+            <a class="button ghost" href="ferramentas/gerador-anuncios-mockups.html">Ver módulo</a>
           </article>
           <article class="tool-card">
             <span class="tool-badge soon">Em breve</span>
@@ -688,7 +754,7 @@
               <h3>Adesivos e Etiquetas</h3>
               <p>Monte cartelas, etiquetas e adesivos com medidas, margens e SVG de corte.</p>
             </div>
-            <a class="button ghost" href="ferramentas/gerador-adesivos-etiquetas.html">Ver proxima</a>
+            <a class="button ghost" href="ferramentas/gerador-adesivos-etiquetas.html">Ver próxima</a>
           </article>
         </div>
       </section>
@@ -699,28 +765,28 @@
             <span class="eyebrow">Loja digital</span>
             <h2>Packs prontos para acelerar datas e temas.</h2>
           </div>
-          <p>A loja sera uma frente complementar ao SaaS: produtos digitais para quem quer comprar artes prontas, editar rapido e produzir sem partir do zero.</p>
+          <p>A loja será uma frente complementar ao SaaS: produtos digitais para quem quer comprar artes prontas, editar rápido e produzir sem partir do zero.</p>
         </div>
         <div class="tools-grid">
           <article class="tool-card">
-            <span class="tool-badge soon">Loja em preparacao</span>
+            <span class="tool-badge soon">Loja em preparação</span>
             <div>
               <h3>Packs sazonais</h3>
-              <p>Pascoa, Natal, Dia das Maes, festa junina, volta as aulas e datas comerciais.</p>
+              <p>Páscoa, Natal, Dia das Mães, festa junina, volta às aulas e datas comerciais.</p>
             </div>
           </article>
           <article class="tool-card">
             <span class="tool-badge soon">Produtos digitais</span>
             <div>
-              <h3>Artes tematicas</h3>
-              <p>Kits infantis, pets, profissões, casamento, evangelico e temas recorrentes de atelie.</p>
+              <h3>Artes temáticas</h3>
+              <p>Kits infantis, pets, profissões, casamento, evangélico e temas recorrentes de ateliê.</p>
             </div>
           </article>
           <article class="tool-card active">
-            <span class="tool-badge">Nova area</span>
+            <span class="tool-badge">Nova área</span>
             <div>
               <h3>Artiva Store</h3>
-              <p>Espaco para vender PNG, PDF, SVG, mockups, bases e arquivos editaveis.</p>
+              <p>Espaço para vender PNG, PDF, SVG, mockups, bases e arquivos editáveis.</p>
             </div>
             <a class="button" href="loja.html">Ver loja</a>
           </article>
@@ -730,15 +796,15 @@
       <section class="section audience">
         <div class="audience-panel">
           <span class="eyebrow">Para quem cria todo dia</span>
-          <h2>Feita para a rotina real de atelies.</h2>
-          <p>A Artiva nao quer ser uma IA generica. O foco e ajudar quem vende, imprime, personaliza, monta mockup e precisa ganhar tempo na producao.</p>
+          <h2>Feita para a rotina real de ateliês.</h2>
+          <p>A Artiva não quer ser uma IA genérica. O foco é ajudar quem vende, imprime, personaliza, monta mockup e precisa ganhar tempo na produção.</p>
         </div>
         <div class="audience-list">
           <div class="audience-item">Papelaria personalizada</div>
           <div class="audience-item">Lembrancinhas</div>
           <div class="audience-item">Topos de bolo</div>
-          <div class="audience-item">Sublimacao</div>
-          <div class="audience-item">Encadernacao</div>
+          <div class="audience-item">Sublimação</div>
+          <div class="audience-item">Encadernação</div>
           <div class="audience-item">Vendas na Shopee</div>
           <div class="audience-item">Social media criativo</div>
           <div class="audience-item">Pequenos empreendedores</div>
@@ -749,9 +815,9 @@
         <div class="section-head">
           <div>
             <span class="eyebrow">Planos previstos</span>
-            <h2>Comece simples e evolua com o atelie.</h2>
+          <h2>Comece simples e evolua com o ateliê.</h2>
           </div>
-          <p>Valores finais ainda serao definidos. Esta estrutura orienta o beta e ajuda a validar quais recursos fazem mais diferenca.</p>
+          <p>Valores finais ainda serão definidos. Esta estrutura orienta o beta e ajuda a validar quais recursos fazem mais diferença.</p>
         </div>
         <div class="plans">
           <article class="plan">
@@ -762,20 +828,20 @@
             <div class="price">Beta <span>inicial</span></div>
             <ul>
               <li>Gerador de apliques</li>
-              <li>Exportacao PNG</li>
-              <li>Pagina de impressao</li>
-              <li>Limite mensal de criacoes</li>
+              <li>Exportação PNG</li>
+              <li>Página de impressão</li>
+              <li>Limite mensal de criações</li>
             </ul>
           </article>
           <article class="plan featured">
             <div>
               <h3>Pro</h3>
-              <p>Para atelies que produzem personalizados com frequencia.</p>
+              <p>Para ateliês que produzem personalizados com frequência.</p>
             </div>
             <div class="price">Pro <span>em breve</span></div>
             <ul>
-              <li>Mockups automaticos</li>
-              <li>Exportacao SVG/PDF</li>
+              <li>Mockups automáticos</li>
+              <li>Exportação SVG/PDF</li>
               <li>Templates premium</li>
               <li>IA para variacoes de arte</li>
             </ul>
@@ -783,14 +849,14 @@
           <article class="plan">
             <div>
               <h3>Studio</h3>
-              <p>Para negocios com equipe, identidade e automacoes.</p>
+              <p>Para negócios com equipe, identidade e automações.</p>
             </div>
             <div class="price">Studio <span>futuro</span></div>
             <ul>
-              <li>Multiusuario</li>
+              <li>Multiusuário</li>
               <li>Biblioteca da marca</li>
-              <li>Integracoes com marketplaces</li>
-              <li>Automacoes de producao</li>
+              <li>Integrações com marketplaces</li>
+              <li>Automações de produção</li>
             </ul>
           </article>
         </div>
@@ -799,14 +865,14 @@
       <section class="section final-cta">
         <div>
           <h2>Teste a primeira ferramenta da Artiva.</h2>
-          <p>O Gerador de Apliques ja esta publicado para validar o fluxo de criacao, ajuste e exportacao.</p>
+          <p>O Gerador de Apliques já está publicado para validar o fluxo de criação, ajuste e exportação.</p>
         </div>
         <a class="button" href="ferramentas/gerador-apliques-tubete.html">Abrir Gerador</a>
       </section>
     </main>
 
     <footer>
-      Artiva Studio - tecnologia criativa acessivel para criadores de personalizados.
+      Artiva Studio - tecnologia criativa acessível para criadores de personalizados.
     </footer>
   </div>
 </body>
