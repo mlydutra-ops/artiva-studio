@@ -34,16 +34,53 @@
       </section>
 
       <section class="section">
-        <h2>Layout</h2>
-        <label>
-          Tipo de produto
-          <select id="layoutPreset">
-            <option value="photocard">PhotoCard - 55 x 85 mm</option>
-            <option value="keychain">Chaveiro acrílico - 45 x 60 mm</option>
-            <option value="polaroid">Polaroid - 70 x 90 mm</option>
-            <option value="custom">Personalizado</option>
-          </select>
-        </label>
+        <div class="section-row">
+          <h2>Layout</h2>
+          <span class="hint" id="layoutPhotoCount">0 fotos</span>
+        </div>
+        <input id="layoutPreset" type="hidden" value="photocard">
+        <div class="layout-list" id="layoutCards" aria-label="Tipos de layout FotoPrint">
+          <button class="layout-card active" type="button" data-preset="photocard">
+            <span class="layout-thumb photo"></span>
+            <span><strong>PhotoCard</strong><small>5,5 x 8,5 cm - retrato</small></span>
+          </button>
+          <button class="layout-card" type="button" data-preset="keychain3x4">
+            <span class="layout-thumb photo"></span>
+            <span><strong>Chaveiro acrílico 3x4</strong><small>3 x 4 cm - acrílico</small></span>
+          </button>
+          <button class="layout-card" type="button" data-preset="keychainRound">
+            <span class="layout-thumb round"></span>
+            <span><strong>Chaveiro acrílico redondo</strong><small>arte 3,5 cm / corte 3,4 cm</small></span>
+          </button>
+          <button class="layout-card" type="button" data-preset="portrait6x9">
+            <span class="layout-thumb photo"></span>
+            <span><strong>Foto retrato 6x9</strong><small>6 x 9 cm - lembrancinha</small></span>
+          </button>
+          <button class="layout-card" type="button" data-preset="polaroidMini">
+            <span class="layout-thumb polaroid"></span>
+            <span><strong>Polaroid clássica mini</strong><small>7,2 x 9 cm - 6 por folha</small></span>
+          </button>
+          <button class="layout-card" type="button" data-preset="polaroidClassic">
+            <span class="layout-thumb polaroid"></span>
+            <span><strong>Polaroid clássica padrão</strong><small>9 x 11,5 cm - 4 por folha</small></span>
+          </button>
+          <button class="layout-card" type="button" data-preset="polaroidTape">
+            <span class="layout-thumb polaroid tape"></span>
+            <span><strong>Polaroid estilizada - fita</strong><small>7,2 x 9 cm com fita decorativa</small></span>
+          </button>
+          <button class="layout-card" type="button" data-preset="polaroidHearts">
+            <span class="layout-thumb polaroid hearts"></span>
+            <span><strong>Polaroid estilizada - corações</strong><small>7,2 x 9 cm com borda estampada</small></span>
+          </button>
+          <button class="layout-card" type="button" data-preset="polaroidColor">
+            <span class="layout-thumb polaroid dark"></span>
+            <span><strong>Polaroid colors</strong><small>7,2 x 9 cm com cor personalizável</small></span>
+          </button>
+          <button class="layout-card" type="button" data-preset="custom">
+            <span class="layout-thumb photo"></span>
+            <span><strong>Personalizado</strong><small>Defina largura, altura e estilo</small></span>
+          </button>
+        </div>
         <div class="grid">
           <label>
             Largura (mm)
@@ -89,7 +126,7 @@
         </label>
         <div class="grid">
           <label>
-            Margem de corte (mm)
+            Sangria da arte (mm)
             <input id="cutMargin" type="number" min="0" max="8" step=".5" value="1">
           </label>
           <label>
@@ -101,6 +138,7 @@
           <input id="showGuides" type="checkbox" checked>
           Mostrar guias na impressão
         </label>
+        <p class="hint">A medida do produto continua sendo o corte final. A sangria aumenta a arte para fora da linha, ajudando a evitar margens brancas.</p>
       </section>
 
       <section class="section">

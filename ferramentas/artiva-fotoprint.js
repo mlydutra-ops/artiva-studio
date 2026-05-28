@@ -3,30 +3,30 @@ const A4 = { wMm: 210, hMm: 297, w: Math.round(210 * MM), h: Math.round(297 * MM
 const $ = (id) => document.getElementById(id);
 const state = { photos: [] };
 
+const presets = {
+  photocard: { label: "PhotoCard", w: 55, h: 85, cols: 3, rows: 3, gap: 4, radius: 4, style: "photo" },
+  keychain3x4: { label: "chaveiro acrílico 3x4", w: 30, h: 40, cols: 5, rows: 6, gap: 4, radius: 3, style: "photo" },
+  keychainRound: { label: "chaveiro acrílico redondo", w: 35, h: 35, cols: 4, rows: 6, gap: 5, radius: 18, style: "round" },
+  portrait6x9: { label: "foto retrato 6x9", w: 60, h: 90, cols: 3, rows: 3, gap: 4, radius: 3, style: "photo" },
+  polaroidMini: { label: "Polaroid clássica mini", w: 72, h: 90, cols: 2, rows: 3, gap: 6, radius: 2, style: "polaroid" },
+  polaroidClassic: { label: "Polaroid clássica padrão", w: 90, h: 115, cols: 2, rows: 2, gap: 8, radius: 2, style: "polaroid" },
+  polaroidTape: { label: "Polaroid estilizada - fita", w: 72, h: 90, cols: 2, rows: 3, gap: 6, radius: 2, style: "polaroid-tape" },
+  polaroidHearts: { label: "Polaroid estilizada - corações", w: 72, h: 90, cols: 2, rows: 3, gap: 6, radius: 2, style: "polaroid-hearts" },
+  polaroidColor: { label: "Polaroid colors", w: 72, h: 90, cols: 2, rows: 3, gap: 6, radius: 2, style: "polaroid-color" },
+  custom: { label: "layout personalizado", w: 55, h: 85, cols: 3, rows: 3, gap: 4, radius: 4, style: "photo" }
+};
+
 const controls = [
-  "layoutPreset", "itemW", "itemH", "cols", "rows", "gap", "pageMargin",
+  "itemW", "itemH", "cols", "rows", "gap", "pageMargin",
   "guideMode", "cutMargin", "radius", "showGuides"
 ];
 
-const presets = {
-  photocard: { w: 55, h: 85, cols: 3, rows: 3, gap: 4, radius: 4 },
-  keychain: { w: 45, h: 60, cols: 4, rows: 4, gap: 4, radius: 8 },
-  polaroid: { w: 70, h: 90, cols: 2, rows: 3, gap: 5, radius: 2 }
-};
-
 controls.forEach((id) => $(id).addEventListener("input", render));
 
-$("layoutPreset").addEventListener("change", () => {
-  const preset = presets[$("layoutPreset").value];
-  if (preset) {
-    $("itemW").value = preset.w;
-    $("itemH").value = preset.h;
-    $("cols").value = preset.cols;
-    $("rows").value = preset.rows;
-    $("gap").value = preset.gap;
-    $("radius").value = preset.radius;
-  }
-  render();
+$("layoutCards").addEventListener("click", (event) => {
+  const card = event.target.closest("[data-preset]");
+  if (!card) return;
+  applyPreset(card.dataset.preset);
 });
 
 $("photoFiles").addEventListener("change", async (event) => {
@@ -51,27 +51,48 @@ $("svgBtn").addEventListener("click", downloadSvg);
 $("pdfBtn").addEventListener("click", openPdfPrint);
 $("cmykBtn").addEventListener("click", openCmykGuide);
 
+function applyPreset(key) {
+  const preset = presets[key] || presets.photocard;
+  $("layoutPreset").value = key;
+  $("itemW").value = preset.w;
+  $("itemH").value = preset.h;
+  $("cols").value = preset.cols;
+  $("rows").value = preset.rows;
+  $("gap").value = preset.gap;
+  $("radius").value = preset.radius;
+  document.querySelectorAll(".layout-card").forEach((card) => {
+    card.classList.toggle("active", card.dataset.preset === key);
+  });
+  render();
+}
+
 function getConfig() {
+  const presetKey = $("layoutPreset").value;
+  const preset = presets[presetKey] || presets.custom;
   return {
-    itemW: parseFloat($("itemW").value),
-    itemH: parseFloat($("itemH").value),
-    cols: parseInt($("cols").value, 10),
-    rows: parseInt($("rows").value, 10),
-    gap: parseFloat($("gap").value),
-    pageMargin: parseFloat($("pageMargin").value),
+    itemW: cleanNumber($("itemW").value, preset.w),
+    itemH: cleanNumber($("itemH").value, preset.h),
+    cols: cleanInteger($("cols").value, preset.cols),
+    rows: cleanInteger($("rows").value, preset.rows),
+    gap: cleanNumber($("gap").value, preset.gap),
+    pageMargin: cleanNumber($("pageMargin").value, 8),
     guideMode: $("guideMode").value,
-    cutMargin: parseFloat($("cutMargin").value),
-    radius: parseFloat($("radius").value),
-    showGuides: $("showGuides").checked,
-    preset: $("layoutPreset").value
+    cutMargin: cleanNumber($("cutMargin").value, 1),
+    radius: cleanNumber($("radius").value, preset.radius),
+    preset: presetKey,
+    style: preset.style || "photo",
+    label: preset.label || "layout personalizado"
   };
 }
 
 function buildItems(cfg) {
   const total = Math.max(1, cfg.cols * cfg.rows);
   const photos = state.photos.length ? state.photos : Array.from({ length: total }, () => null);
-  const itemW = cfg.itemW * MM;
-  const itemH = cfg.itemH * MM;
+  const cutW = cfg.itemW * MM;
+  const cutH = cfg.itemH * MM;
+  const bleed = Math.max(0, cfg.cutMargin * MM);
+  const itemW = cutW + bleed * 2;
+  const itemH = cutH + bleed * 2;
   const gap = cfg.gap * MM;
   const safe = cfg.pageMargin * MM;
   const usableW = A4.w - safe * 2;
@@ -89,6 +110,9 @@ function buildItems(cfg) {
       y: startY + row * (itemH + gap),
       w: itemW,
       h: itemH,
+      cutW,
+      cutH,
+      bleed,
       photo: photos[index % photos.length]
     };
   });
@@ -105,7 +129,8 @@ function render() {
   items.forEach((item) => drawItem(ctx, item, cfg));
 
   $("photoCount").textContent = `${state.photos.length} foto${state.photos.length === 1 ? "" : "s"}`;
-  $("summary").textContent = `${items.length} peça(s) em A4 para ${presetLabel(cfg.preset)}.`;
+  $("layoutPhotoCount").textContent = `${state.photos.length} foto${state.photos.length === 1 ? "" : "s"}`;
+  $("summary").textContent = `${items.length} peça(s) em A4 para ${cfg.label}.`;
   setStatus(state.photos.length ? "Prévia atualizada. Confira as guias antes de imprimir ou cortar." : "Carregue fotos para montar a folha.");
 }
 
@@ -113,6 +138,19 @@ function drawItem(ctx, item, cfg) {
   ctx.save();
   ctx.translate(item.x, item.y);
 
+  if (cfg.style.startsWith("polaroid")) {
+    drawPolaroid(ctx, item, cfg);
+  } else if (cfg.style === "round") {
+    drawRoundPhoto(ctx, item, cfg);
+  } else {
+    drawFullPhoto(ctx, item, cfg);
+  }
+
+  if (cfg.showGuides && cfg.guideMode !== "none") drawGuide(ctx, item, cfg);
+  ctx.restore();
+}
+
+function drawFullPhoto(ctx, item, cfg) {
   if (item.photo) {
     const fit = coverFit(item.photo.image, item.w, item.h);
     ctx.save();
@@ -120,34 +158,78 @@ function drawItem(ctx, item, cfg) {
     ctx.drawImage(item.photo.image, fit.x, fit.y, fit.w, fit.h);
     ctx.restore();
   } else {
+    drawPlaceholder(ctx, 0, 0, item.w, item.h, cfg.radius * MM, "Foto");
+  }
+}
+
+function drawRoundPhoto(ctx, item, cfg) {
+  const r = Math.min(item.w, item.h) / 2;
+  const cx = item.w / 2;
+  const cy = item.h / 2;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.clip();
+  if (item.photo) {
+    const fit = coverFit(item.photo.image, item.w, item.h);
+    ctx.drawImage(item.photo.image, fit.x, fit.y, fit.w, fit.h);
+  } else {
     ctx.fillStyle = "#f4efff";
-    roundRect(ctx, 0, 0, item.w, item.h, cfg.radius * MM);
-    ctx.fill();
+    ctx.fillRect(0, 0, item.w, item.h);
     ctx.fillStyle = "#7b61ff";
-    ctx.font = `700 ${Math.max(22, item.w * .08)}px Arial, sans-serif`;
+    ctx.font = `700 ${Math.max(20, item.w * .12)}px Arial, sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Foto", item.w / 2, item.h / 2);
+    ctx.fillText("Foto", cx, cy);
   }
-
-  if (cfg.showGuides && cfg.guideMode !== "none") drawGuide(ctx, item, cfg);
   ctx.restore();
 }
 
+function drawPolaroid(ctx, item, cfg) {
+  const dark = cfg.style === "polaroid-color";
+  const frame = Math.max(18, item.w * .08);
+  const bottom = Math.max(34, item.h * .20);
+  const photoBox = {
+    x: frame,
+    y: frame,
+    w: item.w - frame * 2,
+    h: item.h - frame - bottom
+  };
+
+  ctx.fillStyle = dark ? "#191721" : "#fffdf9";
+  roundRect(ctx, 0, 0, item.w, item.h, cfg.radius * MM);
+  ctx.fill();
+
+  if (cfg.style === "polaroid-hearts") drawHeartPattern(ctx, item.w, item.h);
+  if (cfg.style === "polaroid-tape") drawTape(ctx, item.w);
+
+  if (item.photo) {
+    const fit = coverFit(item.photo.image, photoBox.w, photoBox.h);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(photoBox.x, photoBox.y, photoBox.w, photoBox.h);
+    ctx.clip();
+    ctx.drawImage(item.photo.image, photoBox.x + fit.x, photoBox.y + fit.y, fit.w, fit.h);
+    ctx.restore();
+  } else {
+    drawPlaceholder(ctx, photoBox.x, photoBox.y, photoBox.w, photoBox.h, 0, "Foto");
+  }
+}
+
 function drawGuide(ctx, item, cfg) {
-  const margin = cfg.cutMargin * MM;
-  const x = -margin;
-  const y = -margin;
-  const w = item.w + margin * 2;
-  const h = item.h + margin * 2;
+  const x = item.bleed;
+  const y = item.bleed;
+  const w = item.cutW;
+  const h = item.cutH;
   const r = cfg.radius * MM;
+
   ctx.save();
-  ctx.strokeStyle = "rgba(43, 17, 79, .55)";
+  ctx.strokeStyle = "rgba(43, 17, 79, .60)";
   ctx.lineWidth = 2;
   if (cfg.guideMode === "dashed") ctx.setLineDash([12, 10]);
   if (cfg.guideMode === "corners") {
     ctx.setLineDash([]);
-    const len = 42;
+    const len = Math.min(42, w / 4, h / 4);
     [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]].forEach(([cx, cy, sx, sy]) => {
       ctx.beginPath();
       ctx.moveTo(cx, cy + sy * len);
@@ -155,6 +237,10 @@ function drawGuide(ctx, item, cfg) {
       ctx.lineTo(cx + sx * len, cy);
       ctx.stroke();
     });
+  } else if (cfg.style === "round") {
+    ctx.beginPath();
+    ctx.arc(item.w / 2, item.h / 2, Math.min(item.cutW, item.cutH) / 2, 0, Math.PI * 2);
+    ctx.stroke();
   } else {
     roundRect(ctx, x, y, w, h, r);
     ctx.stroke();
@@ -166,12 +252,14 @@ function buildCutSvg() {
   const cfg = getConfig();
   const items = buildItems(cfg);
   const paths = items.map((item) => {
-    const margin = cfg.cutMargin;
-    const x = item.x / MM - margin;
-    const y = item.y / MM - margin;
-    const w = item.w / MM + margin * 2;
-    const h = item.h / MM + margin * 2;
-    const r = Math.min(cfg.radius, w / 2, h / 2);
+    const x = (item.x + item.bleed) / MM;
+    const y = (item.y + item.bleed) / MM;
+    const w = item.cutW / MM;
+    const h = item.cutH / MM;
+    if (cfg.style === "round") {
+      return `<circle cx="${fmt(x + w / 2)}" cy="${fmt(y + h / 2)}" r="${fmt(Math.min(w, h) / 2)}"/>`;
+    }
+    const r = Math.min(Math.max(0, cfg.radius - inset), w / 2, h / 2);
     return `<rect x="${fmt(x)}" y="${fmt(y)}" width="${fmt(w)}" height="${fmt(h)}" rx="${fmt(r)}" ry="${fmt(r)}"/>`;
   }).join("\n");
   return [
@@ -195,7 +283,7 @@ function downloadPng() {
 
 function downloadSvg() {
   downloadBlob("artiva-fotoprint-corte.svg", buildCutSvg(), "image/svg+xml");
-  setStatus("SVG de corte gerado. Importe no software da plotter e confira a escala A4 antes de cortar.");
+  setStatus("SVG de corte gerado na medida final indicada. A arte mantém sangria para fora da linha de corte.");
 }
 
 function openPdfPrint() {
@@ -203,6 +291,10 @@ function openPdfPrint() {
   const png = $("sheet").toDataURL("image/png");
   const html = `<!doctype html><html><head><title>Artiva FotoPrint - PDF</title><style>@page{size:A4;margin:0}html,body{margin:0}img{display:block;width:210mm;height:297mm}</style></head><body><img src="${png}" onload="setTimeout(()=>print(),300)"></body></html>`;
   const win = window.open("", "_blank");
+  if (!win) {
+    setStatus("O navegador bloqueou a janela do PDF. Permita pop-ups para gerar o PDF comum.");
+    return;
+  }
   win.document.write(html);
   win.document.close();
   setStatus("PDF comum: use a opção Salvar como PDF na janela de impressão.");
@@ -224,17 +316,46 @@ function openCmykGuide() {
   setStatus("Fluxo CMYK salvo como orientação. A geração CMYK direta será tratada em uma etapa futura.");
 }
 
-function setStatus(message) {
-  $("status").textContent = message;
+function drawPlaceholder(ctx, x, y, w, h, radius, text) {
+  ctx.fillStyle = "#f4efff";
+  roundRect(ctx, x, y, w, h, radius);
+  ctx.fill();
+  ctx.fillStyle = "#7b61ff";
+  ctx.font = `700 ${Math.max(18, w * .11)}px Arial, sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, x + w / 2, y + h / 2);
 }
 
-function presetLabel(value) {
-  return {
-    photocard: "PhotoCard",
-    keychain: "chaveiro acrílico",
-    polaroid: "Polaroid",
-    custom: "layout personalizado"
-  }[value] || "layout";
+function drawTape(ctx, w) {
+  ctx.save();
+  ctx.translate(w / 2 - 42, 4);
+  ctx.rotate(-0.12);
+  ctx.fillStyle = "rgba(232, 135, 176, .55)";
+  roundRect(ctx, 0, 0, 84, 26, 6);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawHeartPattern(ctx, w, h) {
+  ctx.save();
+  ctx.fillStyle = "rgba(232, 135, 176, .22)";
+  for (let y = 10; y < h - 8; y += 28) {
+    for (let x = 10; x < w - 8; x += 30) drawHeart(ctx, x, y, 5);
+  }
+  ctx.restore();
+}
+
+function drawHeart(ctx, x, y, size) {
+  ctx.beginPath();
+  ctx.moveTo(x, y + size);
+  ctx.bezierCurveTo(x - size * 2, y - size, x - size * 3, y + size * 1.5, x, y + size * 3);
+  ctx.bezierCurveTo(x + size * 3, y + size * 1.5, x + size * 2, y - size, x, y + size);
+  ctx.fill();
+}
+
+function setStatus(message) {
+  $("status").textContent = message;
 }
 
 function coverFit(img, boxW, boxH) {
@@ -250,7 +371,7 @@ function roundedClip(ctx, x, y, w, h, r) {
 }
 
 function roundRect(ctx, x, y, w, h, r) {
-  const radius = Math.min(r, w / 2, h / 2);
+  const radius = Math.max(0, Math.min(r, w / 2, h / 2));
   ctx.beginPath();
   ctx.moveTo(x + radius, y);
   ctx.arcTo(x + w, y, x + w, y + h, radius);
@@ -290,8 +411,18 @@ function downloadBlob(name, content, type) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+function cleanNumber(value, fallback) {
+  const number = parseFloat(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function cleanInteger(value, fallback) {
+  const number = parseInt(value, 10);
+  return Number.isFinite(number) ? number : fallback;
+}
+
 function fmt(value) {
   return Number(value).toFixed(3).replace(/\.?0+$/, "");
 }
 
-render();
+applyPreset("photocard");
