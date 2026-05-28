@@ -33,10 +33,17 @@
         <label>
           Enviar fotos
           <input id="photoFiles" type="file" accept="image/png,image/jpeg,image/webp" multiple>
-          <span class="hint">Carregue uma ou várias fotos. A ferramenta repete conforme a quantidade da grade.</span>
+          <span class="hint">Carregue uma ou várias fotos e escolha quantas vezes cada imagem deve aparecer na folha.</span>
         </label>
+        <label>
+          Repetição padrão
+          <input id="repeatCount" type="number" min="1" max="100" step="1" value="1">
+          <span class="hint">Quantidade aplicada nas próximas fotos carregadas. Depois você pode ajustar cada foto separadamente.</span>
+        </label>
+        <div id="photoRepeats" class="photo-repeat-list" aria-live="polite"></div>
         <div class="photo-actions">
           <span class="pill" id="photoCount">0 fotos</span>
+          <button id="fillSheet" type="button" class="secondary">Preencher folha</button>
           <button id="clearPhotos" type="button" class="secondary">Limpar</button>
         </div>
       </section>
@@ -122,16 +129,7 @@
       </section>
 
       <section class="section">
-        <h2>Guias e corte</h2>
-        <label>
-          Guia visual
-          <select id="guideMode">
-            <option value="dashed">Linha tracejada para tesoura</option>
-            <option value="solid">Linha contínua</option>
-            <option value="corners">Marcas nos cantos</option>
-            <option value="none">Sem guia</option>
-          </select>
-        </label>
+        <h2>Corte</h2>
         <div class="grid">
           <label>
             Sangria da arte (mm)
@@ -142,20 +140,33 @@
             <input id="radius" type="number" min="0" max="16" step="1" value="4">
           </label>
         </div>
-        <label class="check">
-          <input id="showGuides" type="checkbox" checked>
-          Mostrar guias na impressão
-        </label>
-        <p class="hint">A medida do produto continua sendo o corte final. A sangria aumenta a arte para fora da linha, ajudando a evitar margens brancas.</p>
+        <div class="grid">
+          <label>
+            Guia para Tesoura/Estilete
+            <select id="printGuide">
+              <option value="none">Sem guia</option>
+              <option value="dashed">Linha tracejada</option>
+              <option value="corners">Marcas nos cantos</option>
+            </select>
+          </label>
+          <label>
+            Cor da guia
+            <select id="guideColor">
+              <option value="#000000">Preta</option>
+              <option value="#ffffff">Branca</option>
+            </select>
+          </label>
+        </div>
+        <p class="hint">Use Sem guia para plotter. As guias de Tesoura/Estilete aparecem no PDF; o SVG continua separado para corte na plotter.</p>
       </section>
 
       <section class="section">
         <h2>Exportar</h2>
         <div class="actions">
-          <button id="renderBtn" type="button">Atualizar prévia</button>
-          <button id="pngBtn" type="button" class="secondary">PNG prévia</button>
-          <button id="svgBtn" type="button" class="secondary">SVG corte</button>
-          <button id="pdfBtn" type="button" class="secondary">PDF comum</button>
+          <button id="pdfBtn" type="button">Baixar PDF</button>
+          <button id="printBtn" type="button" class="secondary">Imprimir</button>
+          <button id="shareBtn" type="button" class="secondary">Compartilhar</button>
+          <button id="svgBtn" type="button" class="secondary">SVG / Plotter</button>
         </div>
         <div id="status" class="status">Carregue fotos para começar a montar a folha.</div>
       </section>
@@ -164,8 +175,8 @@
     <main class="preview">
       <div class="toolbar">
         <div>
-          <span class="eyebrow">Prévia de produção</span>
-          <h2>Folha A4 FotoPrint</h2>
+          <span class="eyebrow">Área de trabalho</span>
+          <h2>Folha A4 para edição e impressão</h2>
           <p id="summary">Nenhuma foto carregada.</p>
         </div>
         <a class="help-link" href="../faq.html">Ajuda</a>

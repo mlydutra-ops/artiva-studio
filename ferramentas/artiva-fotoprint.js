@@ -16,12 +16,12 @@ const presets = {
   custom: { label: "layout personalizado", w: 55, h: 85, cols: 3, rows: 3, gap: 4, radius: 4, style: "photo" }
 };
 
-const controls = [
-  "itemW", "itemH", "cols", "rows", "gap", "pageMargin",
-  "guideMode", "cutMargin", "radius", "showGuides"
-];
+const controls = ["repeatCount", "itemW", "itemH", "cols", "rows", "gap", "pageMargin", "cutMargin", "radius", "printGuide", "guideColor"];
 
-controls.forEach((id) => $(id).addEventListener("input", render));
+controls.forEach((id) => {
+  $(id).addEventListener("input", render);
+  $(id).addEventListener("change", render);
+});
 
 $("layoutCards").addEventListener("click", (event) => {
   const card = event.target.closest("[data-preset]");
@@ -31,12 +31,31 @@ $("layoutCards").addEventListener("click", (event) => {
 
 $("photoFiles").addEventListener("change", async (event) => {
   const files = Array.from(event.target.files || []);
+  const defaultRepeat = Math.max(1, cleanInteger($("repeatCount").value, 1));
   for (const file of files) {
     const url = await fileToDataURL(file);
     const image = await loadImage(url);
-    state.photos.push({ name: file.name, url, image });
+    state.photos.push({ name: file.name, url, image, repeat: defaultRepeat });
   }
   event.target.value = "";
+  render();
+});
+
+$("photoRepeats").addEventListener("input", (event) => {
+  const input = event.target.closest("[data-photo-repeat]");
+  if (!input) return;
+  const index = cleanInteger(input.dataset.photoRepeat, -1);
+  if (!state.photos[index]) return;
+  state.photos[index].repeat = Math.max(1, cleanInteger(input.value, 1));
+  render(false);
+});
+
+$("photoRepeats").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-photo-remove]");
+  if (!button) return;
+  const index = cleanInteger(button.dataset.photoRemove, -1);
+  if (!state.photos[index]) return;
+  state.photos.splice(index, 1);
   render();
 });
 
@@ -45,10 +64,22 @@ $("clearPhotos").addEventListener("click", () => {
   render();
 });
 
-$("renderBtn").addEventListener("click", render);
-$("pngBtn").addEventListener("click", downloadPng);
+$("fillSheet").addEventListener("click", () => {
+  const cfg = getConfig();
+  const total = Math.max(1, cfg.cols * cfg.rows);
+  const photoTotal = Math.max(1, state.photos.length);
+  const repeat = Math.ceil(total / photoTotal);
+  $("repeatCount").value = repeat;
+  state.photos.forEach((photo) => {
+    photo.repeat = repeat;
+  });
+  render();
+});
+
 $("svgBtn").addEventListener("click", downloadSvg);
-$("pdfBtn").addEventListener("click", openPdfPrint);
+$("pdfBtn").addEventListener("click", downloadPdf);
+$("printBtn").addEventListener("click", openPrintPage);
+$("shareBtn").addEventListener("click", sharePdf);
 
 function applyPreset(key) {
   const preset = presets[key] || presets.photocard;
@@ -75,9 +106,11 @@ function getConfig() {
     rows: cleanInteger($("rows").value, preset.rows),
     gap: cleanNumber($("gap").value, preset.gap),
     pageMargin: cleanNumber($("pageMargin").value, 8),
-    guideMode: $("guideMode").value,
     cutMargin: cleanNumber($("cutMargin").value, 1),
     radius: cleanNumber($("radius").value, preset.radius),
+    repeatCount: cleanInteger($("repeatCount").value, 1),
+    printGuide: $("printGuide").value,
+    guideColor: $("guideColor").value,
     preset: presetKey,
     style: preset.style || "photo",
     label: preset.label || "layout personalizado"
@@ -86,7 +119,10 @@ function getConfig() {
 
 function buildItems(cfg) {
   const total = Math.max(1, cfg.cols * cfg.rows);
-  const photos = state.photos.length ? state.photos : Array.from({ length: total }, () => null);
+  const photos = state.photos.length
+    ? buildPhotoSequence(state.photos, cfg.repeatCount).slice(0, total)
+    : Array.from({ length: total }, () => null);
+  const itemCount = state.photos.length ? photos.length : total;
   const cutW = cfg.itemW * MM;
   const cutH = cfg.itemH * MM;
   const bleed = Math.max(0, cfg.cutMargin * MM);
@@ -101,7 +137,7 @@ function buildItems(cfg) {
   const startX = safe + (usableW - gridW) / 2;
   const startY = safe + (usableH - gridH) / 2;
 
-  return Array.from({ length: total }, (_, index) => {
+  return Array.from({ length: itemCount }, (_, index) => {
     const col = index % cfg.cols;
     const row = Math.floor(index / cfg.cols);
     return {
@@ -112,12 +148,19 @@ function buildItems(cfg) {
       cutW,
       cutH,
       bleed,
-      photo: photos[index % photos.length]
+      photo: photos[index]
     };
   });
 }
 
-function render() {
+function buildPhotoSequence(photos, repeatCount) {
+  return photos.flatMap((photo) => {
+    const quantity = Math.max(1, cleanInteger(photo.repeat, repeatCount));
+    return Array.from({ length: quantity }, () => photo);
+  });
+}
+
+function render(syncPhotoList = true) {
   const cfg = getConfig();
   const ctx = $("sheet").getContext("2d");
   ctx.clearRect(0, 0, A4.w, A4.h);
@@ -127,10 +170,42 @@ function render() {
   const items = buildItems(cfg);
   items.forEach((item) => drawItem(ctx, item, cfg));
 
+  if (syncPhotoList) renderPhotoRepeats();
   $("photoCount").textContent = `${state.photos.length} foto${state.photos.length === 1 ? "" : "s"}`;
-  $("layoutPhotoCount").textContent = `${state.photos.length} foto${state.photos.length === 1 ? "" : "s"}`;
-  $("summary").textContent = `${items.length} peça(s) em A4 para ${cfg.label}.`;
-  setStatus(state.photos.length ? "Prévia atualizada. Confira as guias antes de imprimir ou cortar." : "Carregue fotos para montar a folha.");
+  $("layoutPhotoCount").textContent = `${items.length} peça${items.length === 1 ? "" : "s"}`;
+  const totalRequested = getRequestedPieceTotal(cfg);
+  const guideText = cfg.printGuide === "none" ? "Sem guia impressa." : "Guia para Tesoura/Estilete ativa.";
+  $("summary").textContent = state.photos.length
+    ? `${items.length} peça(s) em A4 para ${cfg.label}. ${totalRequested > items.length ? `${totalRequested - items.length} peça(s) ficaram fora da grade. ` : ""}${guideText}`
+    : `${items.length} espaço(s) em A4 para ${cfg.label}. Carregue fotos para montar a folha.`;
+  setStatus(state.photos.length ? "Área de trabalho atualizada. Para corte na plotter, exporte o SVG separado." : "Carregue fotos para montar a folha.");
+}
+
+function renderPhotoRepeats() {
+  const list = $("photoRepeats");
+  if (!state.photos.length) {
+    list.innerHTML = "";
+    return;
+  }
+  list.innerHTML = state.photos.map((photo, index) => `
+    <div class="photo-repeat-row">
+      <img src="${photo.url}" alt="">
+      <div>
+        <strong>Foto ${index + 1}</strong>
+        <span>${escapeHtml(photo.name)}</span>
+      </div>
+      <label>
+        Repetir
+        <input data-photo-repeat="${index}" type="number" min="1" max="100" step="1" value="${Math.max(1, cleanInteger(photo.repeat, 1))}">
+      </label>
+      <button data-photo-remove="${index}" type="button" class="secondary">Remover</button>
+    </div>
+  `).join("");
+}
+
+function getRequestedPieceTotal(cfg) {
+  if (!state.photos.length) return Math.max(1, cfg.cols * cfg.rows);
+  return buildPhotoSequence(state.photos, cfg.repeatCount).length;
 }
 
 function drawItem(ctx, item, cfg) {
@@ -145,8 +220,72 @@ function drawItem(ctx, item, cfg) {
     drawFullPhoto(ctx, item, cfg);
   }
 
-  if (cfg.showGuides && cfg.guideMode !== "none") drawGuide(ctx, item, cfg);
+  drawPrintGuide(ctx, item, cfg);
   ctx.restore();
+}
+
+function drawPrintGuide(ctx, item, cfg) {
+  if (cfg.printGuide === "none") return;
+  const x = item.bleed;
+  const y = item.bleed;
+  const w = item.cutW;
+  const h = item.cutH;
+  const r = cfg.style === "round" ? Math.min(w, h) / 2 : cfg.radius * MM;
+
+  ctx.save();
+  ctx.strokeStyle = cfg.guideColor;
+  ctx.lineWidth = Math.max(2, .35 * MM);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  if (cfg.printGuide === "dashed") {
+    ctx.setLineDash([2.2 * MM, 1.5 * MM]);
+    drawGuideShape(ctx, x, y, w, h, r, cfg.style);
+    ctx.stroke();
+  } else if (cfg.printGuide === "corners") {
+    drawCornerGuides(ctx, x, y, w, h, r, cfg.style);
+  }
+
+  ctx.restore();
+}
+
+function drawGuideShape(ctx, x, y, w, h, r, style) {
+  ctx.beginPath();
+  if (style === "round") {
+    ctx.arc(x + w / 2, y + h / 2, Math.min(w, h) / 2, 0, Math.PI * 2);
+  } else {
+    roundRect(ctx, x, y, w, h, r);
+  }
+}
+
+function drawCornerGuides(ctx, x, y, w, h, r, style) {
+  if (style === "round") {
+    const cx = x + w / 2;
+    const cy = y + h / 2;
+    const radius = Math.min(w, h) / 2;
+    [[-Math.PI / 2, -Math.PI / 2 + .55], [0, .55], [Math.PI / 2, Math.PI / 2 + .55], [Math.PI, Math.PI + .55]].forEach(([start, end]) => {
+      ctx.beginPath();
+      ctx.arc(cx, cy, radius, start, end);
+      ctx.stroke();
+    });
+    return;
+  }
+
+  const len = Math.min(10 * MM, w * .22, h * .22);
+  const inset = Math.min(Math.max(0, r), len * .65);
+  [
+    { sx: x + inset, sy: y, ex: x + len, ey: y, vx: x, vy: y + inset, hx: x, hy: y + len },
+    { sx: x + w - inset, sy: y, ex: x + w - len, ey: y, vx: x + w, vy: y + inset, hx: x + w, hy: y + len },
+    { sx: x + inset, sy: y + h, ex: x + len, ey: y + h, vx: x, vy: y + h - inset, hx: x, hy: y + h - len },
+    { sx: x + w - inset, sy: y + h, ex: x + w - len, ey: y + h, vx: x + w, vy: y + h - inset, hx: x + w, hy: y + h - len }
+  ].forEach((corner) => {
+    ctx.beginPath();
+    ctx.moveTo(corner.sx, corner.sy);
+    ctx.lineTo(corner.ex, corner.ey);
+    ctx.moveTo(corner.vx, corner.vy);
+    ctx.lineTo(corner.hx, corner.hy);
+    ctx.stroke();
+  });
 }
 
 function drawFullPhoto(ctx, item, cfg) {
@@ -161,13 +300,13 @@ function drawFullPhoto(ctx, item, cfg) {
   }
 }
 
-function drawRoundPhoto(ctx, item, cfg) {
-  const r = Math.min(item.w, item.h) / 2;
+function drawRoundPhoto(ctx, item) {
+  const radius = Math.min(item.w, item.h) / 2;
   const cx = item.w / 2;
   const cy = item.h / 2;
   ctx.save();
   ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.clip();
   if (item.photo) {
     const fit = coverFit(item.photo.image, item.w, item.h);
@@ -224,33 +363,6 @@ function drawPolaroid(ctx, item, cfg) {
   }
 }
 
-function drawGuide(ctx, item, cfg) {
-  const x = item.bleed;
-  const y = item.bleed;
-  const w = item.cutW;
-  const h = item.cutH;
-  const r = cfg.radius * MM;
-
-  ctx.save();
-  if (cfg.guideMode === "corners") {
-    const len = Math.min(42, w / 4, h / 4);
-    strokeGuide(ctx, cfg, () => {
-      [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]].forEach(([cx, cy, sx, sy]) => {
-        ctx.moveTo(cx, cy + sy * len);
-        ctx.lineTo(cx, cy);
-        ctx.lineTo(cx + sx * len, cy);
-      });
-    });
-  } else if (cfg.style === "round") {
-    strokeGuide(ctx, cfg, () => {
-      ctx.arc(item.w / 2, item.h / 2, Math.min(item.cutW, item.cutH) / 2, 0, Math.PI * 2);
-    });
-  } else {
-    strokeGuide(ctx, cfg, () => roundRect(ctx, x, y, w, h, r));
-  }
-  ctx.restore();
-}
-
 function buildCutSvg() {
   const cfg = getConfig();
   const items = buildItems(cfg);
@@ -274,33 +386,84 @@ function buildCutSvg() {
   ].join("\n");
 }
 
-function downloadPng() {
-  render();
-  const link = document.createElement("a");
-  link.href = $("sheet").toDataURL("image/png");
-  link.download = "artiva-fotoprint-previa.png";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-}
-
 function downloadSvg() {
   downloadBlob("artiva-fotoprint-corte.svg", buildCutSvg(), "image/svg+xml");
-  setStatus("SVG de corte gerado na medida final indicada. A arte mantém sangria para fora da linha de corte.");
+  setStatus("SVG gerado na medida final indicada. A arte impressa permanece sem marcas visuais.");
 }
 
-function openPdfPrint() {
+function downloadPdf() {
+  render();
+  const pdf = buildPdfFromCanvas($("sheet"));
+  downloadBlob("artiva-fotoprint.pdf", pdf, "application/pdf");
+  setStatus("PDF gerado para download. No celular, procure o arquivo na pasta de downloads do navegador.");
+}
+
+function openPrintPage() {
   render();
   const png = $("sheet").toDataURL("image/png");
-  const html = `<!doctype html><html><head><title>Artiva FotoPrint - PDF</title><style>@page{size:A4;margin:0}html,body{margin:0}img{display:block;width:210mm;height:297mm}</style></head><body><img src="${png}" onload="setTimeout(()=>print(),300)"></body></html>`;
+  const html = `<!doctype html><html><head><title>Artiva FotoPrint - Impressão</title><style>@page{size:A4;margin:0}html,body{margin:0}img{display:block;width:210mm;height:297mm}</style></head><body><img src="${png}" onload="setTimeout(()=>print(),300)"></body></html>`;
   const win = window.open("", "_blank");
   if (!win) {
-    setStatus("O navegador bloqueou a janela do PDF. Permita pop-ups para gerar o PDF comum.");
+    setStatus("O navegador bloqueou a impressão. Use Baixar PDF ou permita pop-ups para imprimir.");
     return;
   }
   win.document.write(html);
   win.document.close();
-  setStatus("PDF comum: use a opção Salvar como PDF na janela de impressão.");
+}
+
+async function sharePdf() {
+  render();
+  const file = new File([buildPdfFromCanvas($("sheet"))], "artiva-fotoprint.pdf", { type: "application/pdf" });
+  if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+    try {
+      await navigator.share({
+        title: "Artiva FotoPrint",
+        text: "Arquivo PDF gerado pela Artiva Studio.",
+        files: [file]
+      });
+      setStatus("PDF compartilhado.");
+    } catch (error) {
+      setStatus("Compartilhamento cancelado ou indisponível neste navegador.");
+    }
+    return;
+  }
+  downloadBlob(file.name, file, file.type);
+  setStatus("Compartilhamento direto não disponível neste navegador. Baixei o PDF para você enviar manualmente.");
+}
+
+function buildPdfFromCanvas(canvas) {
+  const pageW = 595.276;
+  const pageH = 841.89;
+  const imageBinary = atob(canvas.toDataURL("image/jpeg", .95).split(",")[1]);
+  const content = `q\n${fmtPdf(pageW)} 0 0 ${fmtPdf(pageH)} 0 0 cm\n/Im0 Do\nQ`;
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${fmtPdf(pageW)} ${fmtPdf(pageH)}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`,
+    `<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imageBinary.length} >>\nstream\n${imageBinary}\nendstream`,
+    `<< /Length ${content.length} >>\nstream\n${content}\nendstream`
+  ];
+  return pdfBytes(objects);
+}
+
+function pdfBytes(objects) {
+  let body = "%PDF-1.4\n";
+  const offsets = [0];
+  objects.forEach((object, index) => {
+    offsets.push(body.length);
+    body += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  });
+  const xref = body.length;
+  body += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  offsets.slice(1).forEach((offset) => {
+    body += `${String(offset).padStart(10, "0")} 00000 n \n`;
+  });
+  body += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+  const bytes = new Uint8Array(body.length);
+  for (let index = 0; index < body.length; index += 1) {
+    bytes[index] = body.charCodeAt(index) & 255;
+  }
+  return bytes;
 }
 
 function drawPlaceholder(ctx, x, y, w, h, radius, text) {
@@ -312,24 +475,6 @@ function drawPlaceholder(ctx, x, y, w, h, radius, text) {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(text, x + w / 2, y + h / 2);
-}
-
-function strokeGuide(ctx, cfg, buildPath) {
-  const dashed = cfg.guideMode === "dashed";
-  const draw = (color, width, dash = []) => {
-    ctx.save();
-    ctx.beginPath();
-    buildPath();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = width;
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
-    ctx.setLineDash(dash);
-    ctx.stroke();
-    ctx.restore();
-  };
-  draw("rgba(255, 255, 255, .95)", 7, dashed ? [14, 8] : []);
-  draw("rgba(255, 122, 89, .98)", 3, dashed ? [14, 8] : []);
 }
 
 function drawTape(ctx, w) {
@@ -428,6 +573,18 @@ function cleanInteger(value, fallback) {
 
 function fmt(value) {
   return Number(value).toFixed(3).replace(/\.?0+$/, "");
+}
+
+function fmtPdf(value) {
+  return Number(value).toFixed(3).replace(/\.?0+$/, "");
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 applyPreset("photocard");

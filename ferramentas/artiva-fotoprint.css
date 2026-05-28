@@ -333,11 +333,74 @@ button.warning {
   align-items: center;
   gap: 10px;
   margin-top: 10px;
+  flex-wrap: wrap;
 }
 
 .photo-actions button {
   width: auto;
   min-height: 34px;
+}
+
+.photo-repeat-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.photo-repeat-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 84px auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fffdf9;
+}
+
+.photo-repeat-row img {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.photo-repeat-row strong,
+.photo-repeat-row span {
+  display: block;
+}
+
+.photo-repeat-row strong {
+  color: var(--primary-dark);
+  font-size: 13px;
+  line-height: 1.15;
+}
+
+.photo-repeat-row span {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.photo-repeat-row label {
+  margin: 0;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.photo-repeat-row input {
+  min-height: 34px;
+  padding: 7px 8px;
+}
+
+.photo-repeat-row button {
+  width: auto;
+  min-height: 34px;
+  padding: 0 10px;
+  font-size: 12px;
 }
 
 .pill, .help-link {
@@ -412,4 +475,6 @@ canvas {
   .app { grid-template-columns: 1fr; }
   .panel { border-right: 0; border-bottom: 1px solid var(--line); }
   .toolbar { align-items: flex-start; flex-direction: column; }
+  .photo-repeat-row { grid-template-columns: 42px minmax(0, 1fr) 78px; }
+  .photo-repeat-row button { grid-column: 2 / 4; width: 100%; }
 }

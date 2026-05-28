@@ -456,7 +456,7 @@
         <div class="quick-flow">
           <div class="flow-step"><strong>1. Arte</strong>PNG ou kit</div>
           <div class="flow-step"><strong>2. Ajuste</strong>Grade e corte</div>
-          <div class="flow-step"><strong>3. Exporte</strong>PNG, SVG ou impressão</div>
+          <div class="flow-step"><strong>3. Exporte</strong>PDF, imprimir, compartilhar ou SVG</div>
         </div>
       </div>
 
@@ -586,6 +586,25 @@
         </select>
       </label>
 
+      <div class="grid">
+        <label>
+          Guia para Tesoura/Estilete
+          <select id="printGuide">
+            <option value="none">Sem guia</option>
+            <option value="dashed">Linha tracejada</option>
+            <option value="corners">Marcas nos cantos</option>
+          </select>
+        </label>
+        <label>
+          Cor da guia
+          <select id="guideColor">
+            <option value="#000000">Preta</option>
+            <option value="#ffffff">Branca</option>
+          </select>
+        </label>
+      </div>
+      <p class="hint">Use Sem guia para plotter. Para corte manual, as guias aparecem no PDF e na impressão.</p>
+
       <div id="textSection">
       <h2>Texto</h2>
       <label>
@@ -669,10 +688,10 @@
       </div>
 
       <div class="actions">
-        <button id="renderBtn">Atualizar prévia</button>
-        <button id="pngBtn" class="secondary">PNG prévia</button>
-        <button id="svgBtn" class="secondary">SVG corte</button>
-        <button id="printBtn" class="warning">Página impressão</button>
+        <button id="pdfBtn">Baixar PDF</button>
+        <button id="printBtn" class="secondary">Imprimir</button>
+        <button id="shareBtn" class="secondary">Compartilhar</button>
+        <button id="svgBtn" class="secondary">SVG / Plotter</button>
       </div>
 
       <div id="status" class="status">Pronto para montar a primeira folha.</div>
@@ -706,7 +725,7 @@
 
     const controls = [
       "productMode", "itemW", "itemH", "cutMargin", "gap", "cols", "gridRows", "pageMarginX", "pageMarginY",
-      "cutPrecision", "smoothness", "cutMode", "nameY", "ageY",
+      "cutPrecision", "smoothness", "cutMode", "printGuide", "guideColor", "nameY", "ageY",
       "nameSize", "ageSize", "nameCurve", "ageCurve", "textShape", "textColor", "strokeColor",
       "nameStrokeMode", "ageStrokeMode", "fontFamily"
     ];
@@ -724,15 +743,18 @@
       render();
     });
 
-    controls.forEach((id) => $(id).addEventListener("input", render));
+    controls.forEach((id) => {
+      $(id).addEventListener("input", render);
+      $(id).addEventListener("change", render);
+    });
     $("productMode").addEventListener("change", () => {
       updateMode();
       render();
     });
-    $("renderBtn").addEventListener("click", render);
-    $("pngBtn").addEventListener("click", downloadPreviewPng);
     $("svgBtn").addEventListener("click", downloadCutSvg);
     $("printBtn").addEventListener("click", openPrintPage);
+    $("pdfBtn").addEventListener("click", downloadPdf);
+    $("shareBtn").addEventListener("click", sharePdf);
     $("toggleKitList").addEventListener("click", () => {
       state.kitListCollapsed = !state.kitListCollapsed;
       renderKitList();
@@ -811,6 +833,8 @@
         cutPrecision: $("cutPrecision").value,
         smoothness: parseInt($("smoothness").value, 10),
         cutMode: $("cutMode").value,
+        printGuide: $("printGuide").value,
+        guideColor: $("guideColor").value,
         nameY: parseFloat($("nameY").value) / 100,
         ageY: parseFloat($("ageY").value) / 100,
         nameSize: parseFloat($("nameSize").value),
@@ -984,12 +1008,6 @@
     function drawItem(ctx, item, cfg, showCut) {
       ctx.save();
       ctx.translate(item.x, item.y);
-      if (showCut) {
-        ctx.strokeStyle = "#e5e7eb";
-        ctx.lineWidth = 1;
-        roundRect(ctx, 0, 0, item.w, item.h, 16);
-        ctx.stroke();
-      }
 
       const image = item.image || state.image;
       if (image) {
@@ -1004,6 +1022,7 @@
       }
 
       if (item.type === "kit") {
+        drawPrintGuide(ctx, item, cfg);
         ctx.restore();
         return;
       }
@@ -1028,6 +1047,39 @@
         cfg.ageCurve,
         cfg.ageStrokeMode
       );
+      drawPrintGuide(ctx, item, cfg);
+      ctx.restore();
+    }
+
+    function drawPrintGuide(ctx, item, cfg) {
+      if (cfg.printGuide === "none") return;
+      ctx.save();
+      ctx.strokeStyle = cfg.guideColor;
+      ctx.lineWidth = Math.max(2, .35 * MM);
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      if (cfg.printGuide === "dashed") {
+        ctx.setLineDash([2.2 * MM, 1.5 * MM]);
+        roundRect(ctx, 0, 0, item.w, item.h, 16);
+        ctx.stroke();
+      }
+      if (cfg.printGuide === "corners") {
+        const len = Math.min(10 * MM, item.w * .22, item.h * .22);
+        const inset = Math.min(16, len * .65);
+        [
+          { sx: inset, sy: 0, ex: len, ey: 0, vx: 0, vy: inset, hx: 0, hy: len },
+          { sx: item.w - inset, sy: 0, ex: item.w - len, ey: 0, vx: item.w, vy: inset, hx: item.w, hy: len },
+          { sx: inset, sy: item.h, ex: len, ey: item.h, vx: 0, vy: item.h - inset, hx: 0, hy: item.h - len },
+          { sx: item.w - inset, sy: item.h, ex: item.w - len, ey: item.h, vx: item.w, vy: item.h - inset, hx: item.w, hy: item.h - len }
+        ].forEach((corner) => {
+          ctx.beginPath();
+          ctx.moveTo(corner.sx, corner.sy);
+          ctx.lineTo(corner.ex, corner.ey);
+          ctx.moveTo(corner.vx, corner.vy);
+          ctx.lineTo(corner.hx, corner.hy);
+          ctx.stroke();
+        });
+      }
       ctx.restore();
     }
 
@@ -1383,8 +1435,74 @@
       const png = $("preview").toDataURL("image/png");
       const html = `<!doctype html><html><head><title>Impressão A4</title><style>@page{size:A4;margin:0}html,body{margin:0}img{display:block;width:210mm;height:297mm}</style></head><body><img src="${png}" onload="setTimeout(()=>print(),300)"></body></html>`;
       const win = window.open("", "_blank");
+      if (!win) {
+        setStatus("O navegador bloqueou a impressão. Use Baixar PDF ou permita pop-ups para imprimir.", true);
+        return;
+      }
       win.document.write(html);
       win.document.close();
+    }
+
+    function downloadPdf() {
+      render();
+      const pdf = buildPdfFromCanvas($("preview"));
+      downloadBlob("artiva-apliques-tubete.pdf", pdf, "application/pdf");
+      setStatus("PDF gerado para download. No celular, procure o arquivo na pasta de downloads do navegador.");
+    }
+
+    async function sharePdf() {
+      render();
+      const file = new File([buildPdfFromCanvas($("preview"))], "artiva-apliques-tubete.pdf", { type: "application/pdf" });
+      if (navigator.canShare && navigator.canShare({ files: [file] }) && navigator.share) {
+        try {
+          await navigator.share({
+            title: "Artiva - Apliques para Tubete",
+            text: "Arquivo PDF gerado pela Artiva Studio.",
+            files: [file]
+          });
+          setStatus("PDF compartilhado.");
+        } catch (error) {
+          setStatus("Compartilhamento cancelado ou indisponível neste navegador.");
+        }
+        return;
+      }
+      downloadBlob(file.name, file, file.type);
+      setStatus("Compartilhamento direto não disponível neste navegador. Baixei o PDF para você enviar manualmente.");
+    }
+
+    function buildPdfFromCanvas(canvas) {
+      const pageW = 595.276;
+      const pageH = 841.89;
+      const imageBinary = atob(canvas.toDataURL("image/jpeg", .95).split(",")[1]);
+      const content = `q\n${fmtPdf(pageW)} 0 0 ${fmtPdf(pageH)} 0 0 cm\n/Im0 Do\nQ`;
+      const objects = [
+        "<< /Type /Catalog /Pages 2 0 R >>",
+        "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${fmtPdf(pageW)} ${fmtPdf(pageH)}] /Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>`,
+        `<< /Type /XObject /Subtype /Image /Width ${canvas.width} /Height ${canvas.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imageBinary.length} >>\nstream\n${imageBinary}\nendstream`,
+        `<< /Length ${content.length} >>\nstream\n${content}\nendstream`
+      ];
+      return pdfBytes(objects);
+    }
+
+    function pdfBytes(objects) {
+      let body = "%PDF-1.4\n";
+      const offsets = [0];
+      objects.forEach((object, index) => {
+        offsets.push(body.length);
+        body += `${index + 1} 0 obj\n${object}\nendobj\n`;
+      });
+      const xref = body.length;
+      body += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+      offsets.slice(1).forEach((offset) => {
+        body += `${String(offset).padStart(10, "0")} 00000 n \n`;
+      });
+      body += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+      const bytes = new Uint8Array(body.length);
+      for (let index = 0; index < body.length; index += 1) {
+        bytes[index] = body.charCodeAt(index) & 255;
+      }
+      return bytes;
     }
 
     function downloadCutSvg() {
@@ -1438,6 +1556,10 @@
     }
 
     function fmt(value) {
+      return Number(value).toFixed(3).replace(/\.?0+$/, "");
+    }
+
+    function fmtPdf(value) {
       return Number(value).toFixed(3).replace(/\.?0+$/, "");
     }
 

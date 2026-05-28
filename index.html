@@ -76,6 +76,72 @@
       font-weight: 800;
     }
 
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: default;
+    }
+
+    .nav-trigger::after {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-right: 2px solid currentColor;
+      border-bottom: 2px solid currentColor;
+      transform: translateY(-2px) rotate(45deg);
+      opacity: .7;
+    }
+
+    .nav-dropdown {
+      position: absolute;
+      top: calc(100% + 12px);
+      left: 0;
+      z-index: 30;
+      display: grid;
+      gap: 6px;
+      width: 250px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .98);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(6px);
+      transition: .18s ease;
+    }
+
+    .nav-item:hover .nav-dropdown,
+    .nav-item:focus-within .nav-dropdown {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .nav-dropdown a {
+      display: grid;
+      gap: 3px;
+      padding: 10px;
+      border-radius: 8px;
+      color: var(--dark);
+    }
+
+    .nav-dropdown a:hover {
+      background: #f5f1ff;
+    }
+
+    .nav-dropdown small {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
     .mobile-menu {
       display: none;
     }
@@ -125,6 +191,26 @@
       background: var(--primary);
       color: white;
       text-align: center;
+    }
+
+    .mobile-group {
+      display: grid;
+      gap: 6px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fbf9ff;
+    }
+
+    .mobile-group strong {
+      color: var(--dark);
+      font-size: 13px;
+    }
+
+    .mobile-group a {
+      padding: 9px 10px;
+      background: white;
+      border: 1px solid var(--line);
     }
 
     .button {
@@ -604,8 +690,23 @@
       </a>
       <nav aria-label="Principal">
         <a href="sobre.html">Sobre</a>
-        <a href="#ferramentas">Ferramentas</a>
-        <a href="ferramentas/artiva-fotoprint.html">FotoPrint</a>
+        <div class="nav-item">
+          <span class="nav-trigger">Ferramentas</span>
+          <div class="nav-dropdown">
+            <a href="ferramentas/gerador-apliques-tubete.html">
+              Gerador de Apliques
+              <small>Folhas A4 para tubetes, apliques e SVG de corte.</small>
+            </a>
+            <a href="ferramentas/artiva-fotoprint.html">
+              Artiva FotoPrint
+              <small>PhotoCards, chaveiros, Polaroids e guias de corte.</small>
+            </a>
+            <a href="#ferramentas">
+              Ver todas
+              <small>Veja ferramentas disponíveis e próximas atualizações.</small>
+            </a>
+          </div>
+        </div>
         <a href="loja.html">Loja</a>
         <a href="tutoriais.html">Tutoriais</a>
         <a href="faq.html">Ajuda</a>
@@ -618,8 +719,12 @@
         <summary>Menu</summary>
         <div class="mobile-links">
           <a href="sobre.html">Sobre</a>
-          <a href="#ferramentas">Ferramentas</a>
-          <a href="ferramentas/artiva-fotoprint.html">FotoPrint</a>
+          <div class="mobile-group">
+            <strong>Ferramentas</strong>
+            <a href="ferramentas/gerador-apliques-tubete.html">Gerador de Apliques</a>
+            <a href="ferramentas/artiva-fotoprint.html">Artiva FotoPrint</a>
+            <a href="#ferramentas">Ver todas</a>
+          </div>
           <a href="loja.html">Loja</a>
           <a href="tutoriais.html">Tutoriais</a>
           <a href="faq.html">Ajuda</a>
@@ -639,11 +744,11 @@
           <p class="lead">A Artiva Studio está nascendo para ajudar ateliês criativos a gerar artes, montar folhas de produção e preparar arquivos para impressão com menos trabalho manual.</p>
           <div class="actions">
             <a class="button" href="ferramentas/gerador-apliques-tubete.html">Testar Gerador de Apliques</a>
-            <a class="button secondary" href="sobre.html">Conhecer a Artiva</a>
+            <a class="button secondary" href="ferramentas/artiva-fotoprint.html">Abrir FotoPrint</a>
           </div>
           <div class="signals">
             <div class="signal"><strong>Para ateliês</strong>Papelaria, tubetes, topos, sublimação e lembrancinhas.</div>
-            <div class="signal"><strong>Pronto para produção</strong>PNG, página de impressão e SVG de corte.</div>
+            <div class="signal"><strong>Pronto para produção</strong>PDF, impressão, compartilhamento e SVG para plotter.</div>
             <div class="signal"><strong>Fluxo guiado</strong>Preencha, ajuste, confira e exporte.</div>
           </div>
         </div>
@@ -684,12 +789,12 @@
           <p>Primeira ferramenta pronta para testes: monta folha A4 para tubete com grade, margens, texto e corte.</p>
         </article>
         <article class="feature">
-          <h2>Mockups Automáticos</h2>
-          <p>Próxima etapa: aplicar artes em produtos como tubetes, chaveiros, adesivos, ecobags e placas MDF.</p>
+          <h2>Artiva FotoPrint</h2>
+          <p>Monte folhas A4 para PhotoCards, chaveiros acrílicos, Polaroids, fotos personalizadas e SVG de corte.</p>
         </article>
         <article class="feature">
-          <h2>Templates Inteligentes</h2>
-          <p>Biblioteca por tema, formato e nicho para acelerar a rotina de personalização diária.</p>
+          <h2>Próximas ferramentas</h2>
+          <p>Mockups, anúncios, adesivos, etiquetas e templates inteligentes entram nas próximas atualizações.</p>
         </article>
       </section>
 
@@ -720,7 +825,7 @@
           <article class="step">
             <span class="step-number">4</span>
             <h3>Exporte e venda</h3>
-            <p>Gere PNG, SVG, página de impressão e mockups para divulgar melhor.</p>
+            <p>Gere PDF, impressão, compartilhamento, SVG para plotter e mockups para divulgar melhor.</p>
           </article>
         </div>
       </section>
@@ -839,7 +944,7 @@
             <ul>
               <li>Gerador de apliques</li>
               <li>Exportação PNG</li>
-              <li>Página de impressão</li>
+              <li>PDF, impressão e compartilhamento</li>
               <li>Limite mensal de criações</li>
             </ul>
           </article>
@@ -874,10 +979,13 @@
 
       <section class="section final-cta">
         <div>
-          <h2>Teste a primeira ferramenta da Artiva.</h2>
-          <p>O Gerador de Apliques já está publicado para validar o fluxo de criação, ajuste e exportação.</p>
+          <h2>Teste as ferramentas beta da Artiva.</h2>
+          <p>Comece pelo Gerador de Apliques ou pela FotoPrint para validar o fluxo de criação, ajuste, impressão e corte.</p>
         </div>
-        <a class="button" href="ferramentas/gerador-apliques-tubete.html">Abrir Gerador</a>
+        <div class="actions">
+          <a class="button" href="ferramentas/gerador-apliques-tubete.html">Abrir Apliques</a>
+          <a class="button secondary" href="ferramentas/artiva-fotoprint.html">Abrir FotoPrint</a>
+        </div>
       </section>
     </main>
 
