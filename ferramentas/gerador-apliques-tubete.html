@@ -370,6 +370,28 @@
       font-weight: 700;
     }
 
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .help-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 32px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: white;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
     .quick-flow {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -651,7 +673,10 @@
             <h1>Folha A4</h1>
             <p id="summary">Nenhum arquivo carregado ainda.</p>
           </div>
-          <span class="pill" id="countPill">0 pecas</span>
+          <div class="toolbar-actions">
+            <a class="help-link" href="../faq.html">Ajuda</a>
+            <span class="pill" id="countPill">0 pecas</span>
+          </div>
         </div>
         <div class="sheet-wrap">
           <canvas id="preview" width="2480" height="3508"></canvas>
