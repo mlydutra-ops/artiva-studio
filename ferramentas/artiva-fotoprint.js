@@ -49,7 +49,6 @@ $("renderBtn").addEventListener("click", render);
 $("pngBtn").addEventListener("click", downloadPng);
 $("svgBtn").addEventListener("click", downloadSvg);
 $("pdfBtn").addEventListener("click", openPdfPrint);
-$("cmykBtn").addEventListener("click", openCmykGuide);
 
 function applyPreset(key) {
   const preset = presets[key] || presets.photocard;
@@ -199,9 +198,18 @@ function drawPolaroid(ctx, item, cfg) {
   ctx.fillStyle = dark ? "#191721" : "#fffdf9";
   roundRect(ctx, 0, 0, item.w, item.h, cfg.radius * MM);
   ctx.fill();
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = dark ? "#191721" : "#ded6cc";
+  ctx.stroke();
 
   if (cfg.style === "polaroid-hearts") drawHeartPattern(ctx, item.w, item.h);
   if (cfg.style === "polaroid-tape") drawTape(ctx, item.w);
+
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(photoBox.x, photoBox.y, photoBox.w, photoBox.h);
+  ctx.strokeStyle = dark ? "#ffffff" : "#e3d9cd";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(photoBox.x, photoBox.y, photoBox.w, photoBox.h);
 
   if (item.photo) {
     const fit = coverFit(item.photo.image, photoBox.w, photoBox.h);
@@ -224,26 +232,21 @@ function drawGuide(ctx, item, cfg) {
   const r = cfg.radius * MM;
 
   ctx.save();
-  ctx.strokeStyle = "rgba(43, 17, 79, .60)";
-  ctx.lineWidth = 2;
-  if (cfg.guideMode === "dashed") ctx.setLineDash([12, 10]);
   if (cfg.guideMode === "corners") {
-    ctx.setLineDash([]);
     const len = Math.min(42, w / 4, h / 4);
-    [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]].forEach(([cx, cy, sx, sy]) => {
-      ctx.beginPath();
-      ctx.moveTo(cx, cy + sy * len);
-      ctx.lineTo(cx, cy);
-      ctx.lineTo(cx + sx * len, cy);
-      ctx.stroke();
+    strokeGuide(ctx, cfg, () => {
+      [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]].forEach(([cx, cy, sx, sy]) => {
+        ctx.moveTo(cx, cy + sy * len);
+        ctx.lineTo(cx, cy);
+        ctx.lineTo(cx + sx * len, cy);
+      });
     });
   } else if (cfg.style === "round") {
-    ctx.beginPath();
-    ctx.arc(item.w / 2, item.h / 2, Math.min(item.cutW, item.cutH) / 2, 0, Math.PI * 2);
-    ctx.stroke();
+    strokeGuide(ctx, cfg, () => {
+      ctx.arc(item.w / 2, item.h / 2, Math.min(item.cutW, item.cutH) / 2, 0, Math.PI * 2);
+    });
   } else {
-    roundRect(ctx, x, y, w, h, r);
-    ctx.stroke();
+    strokeGuide(ctx, cfg, () => roundRect(ctx, x, y, w, h, r));
   }
   ctx.restore();
 }
@@ -259,7 +262,7 @@ function buildCutSvg() {
     if (cfg.style === "round") {
       return `<circle cx="${fmt(x + w / 2)}" cy="${fmt(y + h / 2)}" r="${fmt(Math.min(w, h) / 2)}"/>`;
     }
-    const r = Math.min(Math.max(0, cfg.radius - inset), w / 2, h / 2);
+    const r = Math.min(Math.max(0, cfg.radius), w / 2, h / 2);
     return `<rect x="${fmt(x)}" y="${fmt(y)}" width="${fmt(w)}" height="${fmt(h)}" rx="${fmt(r)}" ry="${fmt(r)}"/>`;
   }).join("\n");
   return [
@@ -300,22 +303,6 @@ function openPdfPrint() {
   setStatus("PDF comum: use a opção Salvar como PDF na janela de impressão.");
 }
 
-function openCmykGuide() {
-  const text = [
-    "Fluxo futuro: PDF impressão CMYK",
-    "",
-    "Navegadores geram PDF em RGB. Para impressão profissional em CMYK, exporte o PNG/PDF comum e converta em um editor gráfico ou fluxo de gráfica.",
-    "",
-    "Sugestão atual:",
-    "1. Gere a folha em PNG ou PDF comum.",
-    "2. Abra no Canva, Photoshop, Illustrator, Corel ou ferramenta da gráfica.",
-    "3. Converta para CMYK conforme o perfil solicitado.",
-    "4. Confira escala, sangria e margens antes de imprimir."
-  ].join("\n");
-  downloadBlob("artiva-fotoprint-fluxo-cmyk.txt", text, "text/plain;charset=utf-8");
-  setStatus("Fluxo CMYK salvo como orientação. A geração CMYK direta será tratada em uma etapa futura.");
-}
-
 function drawPlaceholder(ctx, x, y, w, h, radius, text) {
   ctx.fillStyle = "#f4efff";
   roundRect(ctx, x, y, w, h, radius);
@@ -325,6 +312,24 @@ function drawPlaceholder(ctx, x, y, w, h, radius, text) {
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(text, x + w / 2, y + h / 2);
+}
+
+function strokeGuide(ctx, cfg, buildPath) {
+  const dashed = cfg.guideMode === "dashed";
+  const draw = (color, width, dash = []) => {
+    ctx.save();
+    ctx.beginPath();
+    buildPath();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.setLineDash(dash);
+    ctx.stroke();
+    ctx.restore();
+  };
+  draw("rgba(255, 255, 255, .95)", 7, dashed ? [14, 8] : []);
+  draw("rgba(255, 122, 89, .98)", 3, dashed ? [14, 8] : []);
 }
 
 function drawTape(ctx, w) {
