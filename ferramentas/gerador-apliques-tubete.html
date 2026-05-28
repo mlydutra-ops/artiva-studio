@@ -36,7 +36,7 @@
 
     .app {
       display: grid;
-      grid-template-columns: 104px minmax(340px, 430px) 1fr;
+      grid-template-columns: 118px minmax(340px, 430px) 1fr;
       min-height: 100vh;
     }
 
@@ -44,7 +44,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 18px;
+      gap: 14px;
       padding: 18px 12px;
       background: linear-gradient(180deg, var(--primary-dark), #43228a 58%, var(--primary));
       color: white;
@@ -56,33 +56,35 @@
       display: grid;
       place-items: center;
       width: 64px;
-      height: 48px;
+      height: 64px;
       border-radius: 8px;
       background: rgba(255, 255, 255, .1);
       border: 1px solid rgba(255, 255, 255, .18);
-      overflow: hidden;
     }
 
     .brand-mark img {
       display: block;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      padding: 5px;
     }
 
     .rail-item {
       display: grid;
       place-items: center;
-      width: 48px;
-      height: 48px;
+      width: 76px;
+      min-height: 54px;
+      padding: 0 6px;
       border-radius: 8px;
       border: 1px solid rgba(255, 255, 255, .18);
       color: rgba(255, 255, 255, .72);
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 800;
       line-height: 1.1;
       text-align: center;
       word-break: normal;
+      overflow-wrap: normal;
     }
 
     .rail-item.active {
@@ -435,7 +437,7 @@
 </head>
 <body>
   <div class="app">
-    <nav class="rail" aria-label="Navegacao Artiva">
+    <nav class="rail" aria-label="Navegação Artiva">
       <div class="brand-mark">
         <img src="../assets/artiva-icone-ui.png" alt="Artiva">
       </div>
@@ -450,11 +452,11 @@
         <img class="panel-logo" src="../assets/artiva-wordmark-ui.png" alt="Artiva">
         <span class="eyebrow">Artiva Studio</span>
         <h1>Gerador de Apliques</h1>
-        <p>Monte folhas A4 para tubete com nome, idade, repeticao automatica e SVG de corte pronto para producao.</p>
+        <p>Monte folhas A4 para tubete com nome, idade, repetição automática e SVG de corte pronto para produção.</p>
         <div class="quick-flow">
           <div class="flow-step"><strong>1. Arte</strong>PNG ou kit</div>
           <div class="flow-step"><strong>2. Ajuste</strong>Grade e corte</div>
-          <div class="flow-step"><strong>3. Exporte</strong>PNG, SVG ou impressao</div>
+          <div class="flow-step"><strong>3. Exporte</strong>PNG, SVG ou impressão</div>
         </div>
       </div>
 
@@ -463,13 +465,13 @@
         Tipo de aplique
         <select id="productMode">
           <option value="personalized">Personalizado com nome/idade</option>
-          <option value="kit">Kit sem personalizacao</option>
+          <option value="kit">Kit sem personalização</option>
         </select>
       </label>
       <label id="personalArtField">
         Arte base em PNG
         <input id="artFile" type="file" accept="image/png,image/webp,image/jpeg">
-        <span class="hint">De preferencia com fundo transparente e area vazia para nome/idade.</span>
+        <span class="hint">De preferência com fundo transparente e área vazia para nome/idade.</span>
       </label>
 
       <div id="kitFields" class="hidden">
@@ -478,8 +480,19 @@
           <input id="kitFiles" type="file" accept="image/png,image/webp,image/jpeg" multiple>
           <span class="hint">Carregue as figuras separadas. Ajuste a quantidade de cada uma na lista.</span>
         </label>
+        <div class="grid">
+          <label>
+            Repetir imagem (vezes)
+            <input id="kitRepeatQty" type="number" min="1" max="99" step="1" value="16">
+          </label>
+          <label>
+            Preencher folha
+            <button id="fillKitPage" class="secondary" type="button">Completar página</button>
+          </label>
+        </div>
+        <span class="hint">Use essa opção para repetir a mesma imagem e completar a folha sem carregar o arquivo várias vezes.</span>
         <div class="kit-summary">
-          <span class="pill" id="kitSummary">0 imagens / 0 pecas</span>
+          <span class="pill" id="kitSummary">0 imagens / 0 peças</span>
           <button id="toggleKitList" class="secondary" type="button">Ocultar lista</button>
         </div>
         <div id="kitList" class="kit-list"></div>
@@ -523,7 +536,7 @@
           <input id="cutMargin" type="number" min="0" max="8" step=".5" value="2">
         </label>
         <label>
-          Espaco entre pecas (mm)
+          Espaço entre peças (mm)
           <input id="gap" type="number" min="0" max="12" step=".5" value="2">
         </label>
       </div>
@@ -552,7 +565,7 @@
 
       <div class="grid">
         <label>
-          Precisao do corte
+          Precisão do corte
           <select id="cutPrecision">
             <option value="fine">Fina</option>
             <option value="normal">Normal</option>
@@ -560,7 +573,7 @@
           </select>
         </label>
         <label>
-          Suavizacao
+          Suavização
           <input id="smoothness" type="number" min="0" max="5" step="1" value="1">
         </label>
       </div>
@@ -569,7 +582,7 @@
         Modo de corte
         <select id="cutMode">
           <option value="alpha">Contorno da imagem</option>
-          <option value="round">Retangulo arredondado</option>
+          <option value="round">Retângulo arredondado</option>
         </select>
       </label>
 
@@ -656,10 +669,10 @@
       </div>
 
       <div class="actions">
-        <button id="renderBtn">Atualizar previa</button>
-        <button id="pngBtn" class="secondary">PNG previa</button>
+        <button id="renderBtn">Atualizar prévia</button>
+        <button id="pngBtn" class="secondary">PNG prévia</button>
         <button id="svgBtn" class="secondary">SVG corte</button>
-        <button id="printBtn" class="warning">Pagina impressao</button>
+        <button id="printBtn" class="warning">Página impressão</button>
       </div>
 
       <div id="status" class="status">Pronto para montar a primeira folha.</div>
@@ -669,13 +682,13 @@
       <div class="preview-shell">
         <div class="toolbar">
           <div>
-            <span class="eyebrow">Previa de producao</span>
+            <span class="eyebrow">Prévia de produção</span>
             <h1>Folha A4</h1>
             <p id="summary">Nenhum arquivo carregado ainda.</p>
           </div>
           <div class="toolbar-actions">
             <a class="help-link" href="../faq.html">Ajuda</a>
-            <span class="pill" id="countPill">0 pecas</span>
+            <span class="pill" id="countPill">0 peças</span>
           </div>
         </div>
         <div class="sheet-wrap">
@@ -724,6 +737,19 @@
       state.kitListCollapsed = !state.kitListCollapsed;
       renderKitList();
     });
+    $("kitRepeatQty").addEventListener("input", () => {
+      const repeat = Math.max(1, parseInt($("kitRepeatQty").value, 10) || 1);
+      state.kitImages.forEach((entry) => {
+        entry.qty = repeat;
+      });
+      renderKitList();
+      render();
+    });
+    $("fillKitPage").addEventListener("click", () => {
+      fillKitPage();
+      renderKitList();
+      render();
+    });
 
     $("artFile").addEventListener("change", async (event) => {
       const file = event.target.files[0];
@@ -738,12 +764,13 @@
       for (const file of files) {
         const url = await fileToDataURL(file);
         const image = await loadImage(url);
+        const repeat = Math.max(1, parseInt($("kitRepeatQty").value, 10) || 1);
         state.kitImages.push({
           id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
           name: file.name,
           url,
           image,
-          qty: 1
+          qty: repeat
         });
       }
       event.target.value = "";
@@ -866,7 +893,7 @@
 
     function renderKitList() {
       const total = state.kitImages.reduce((sum, entry) => sum + (parseInt(entry.qty, 10) || 0), 0);
-      $("kitSummary").textContent = `${state.kitImages.length} imagens / ${total} pecas`;
+      $("kitSummary").textContent = `${state.kitImages.length} imagens / ${total} peças`;
       $("toggleKitList").textContent = state.kitListCollapsed ? "Mostrar lista" : "Ocultar lista";
       $("kitList").classList.toggle("hidden", state.kitListCollapsed);
       $("kitList").innerHTML = state.kitImages.map((entry) => `
@@ -877,6 +904,21 @@
           <button class="icon-btn" data-kit-remove="${entry.id}" type="button" title="Remover">x</button>
         </div>
       `).join("");
+    }
+
+    function fillKitPage() {
+      const capacity = Math.max(1, (parseInt($("cols").value, 10) || 1) * (parseInt($("gridRows").value, 10) || 1));
+      $("kitRepeatQty").value = capacity;
+      if (!state.kitImages.length) return;
+      if (state.kitImages.length === 1) {
+        state.kitImages[0].qty = capacity;
+        return;
+      }
+      const base = Math.floor(capacity / state.kitImages.length);
+      const extra = capacity % state.kitImages.length;
+      state.kitImages.forEach((entry, index) => {
+        entry.qty = base + (index < extra ? 1 : 0);
+      });
     }
 
     function escapeHtml(value) {
@@ -903,7 +945,7 @@
       const startX = safeX + (usableW - (cols * itemW + (cols - 1) * gap)) / 2;
       const startY = safeY + (usableH - (rowsPerPage * itemH + (rowsPerPage - 1) * gap)) / 2;
       if (startX < safeX || startY < safeY) {
-        setStatus("A grade ficou maior que a area segura da A4. Reduza o aplique, o espacamento ou a margem da folha.", true);
+        setStatus("A grade ficou maior que a área segura da A4. Reduza o aplique, o espaçamento ou a margem da folha.", true);
       }
       return rows.slice(0, capacity).map((row, index) => {
         const col = index % cols;
@@ -924,17 +966,17 @@
       const items = layout(state.rows, cfg);
       items.forEach((item) => drawItem(ctx, item, cfg, true));
 
-      $("summary").textContent = `${items.length} peca(s) nesta folha em grade ${cfg.cols} x ${cfg.gridRows}.`;
-      $("countPill").textContent = `${items.length} pecas`;
+      $("summary").textContent = `${items.length} peça(s) nesta folha em grade ${cfg.cols} x ${cfg.gridRows}.`;
+      $("countPill").textContent = `${items.length} peças`;
       if (state.rows.length > items.length) {
-        setStatus(`A folha mostra ${items.length} de ${state.rows.length} pecas. Aumente a grade, reduza o tamanho ou gere outra folha.`, true);
+        setStatus(`A folha mostra ${items.length} de ${state.rows.length} peças. Aumente a grade, reduza o tamanho ou gere outra folha.`, true);
         return;
       }
       if (items.every((item) => item.x >= cfg.pageMarginX * MM && item.y >= cfg.pageMarginY * MM)) {
         if (cfg.productMode === "kit") {
-          setStatus(items.length ? "Previa do kit atualizada." : "Carregue as artes separadas do kit para montar a folha.");
+          setStatus(items.length ? "Prévia do kit atualizada." : "Carregue as artes separadas do kit para montar a folha.");
         } else {
-          setStatus(state.image ? "Previa atualizada." : "Carregue um PNG para ver a arte final. O texto e a grade ja estao funcionando.");
+          setStatus(state.image ? "Prévia atualizada." : "Carregue um PNG para ver a arte final. O texto e a grade já estão funcionando.");
         }
       }
     }
@@ -1339,7 +1381,7 @@
     function openPrintPage() {
       render();
       const png = $("preview").toDataURL("image/png");
-      const html = `<!doctype html><html><head><title>Impressao A4</title><style>@page{size:A4;margin:0}html,body{margin:0}img{display:block;width:210mm;height:297mm}</style></head><body><img src="${png}" onload="setTimeout(()=>print(),300)"></body></html>`;
+      const html = `<!doctype html><html><head><title>Impressão A4</title><style>@page{size:A4;margin:0}html,body{margin:0}img{display:block;width:210mm;height:297mm}</style></head><body><img src="${png}" onload="setTimeout(()=>print(),300)"></body></html>`;
       const win = window.open("", "_blank");
       win.document.write(html);
       win.document.close();
