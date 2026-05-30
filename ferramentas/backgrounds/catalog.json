@@ -1,0 +1,326 @@
+﻿[
+    {
+        "id":  "floral-bege-elegante",
+        "name":  "Bege Elegante",
+        "theme":  "Floral",
+        "subtheme":  "",
+        "fileUrl":  "backgrounds/library/Floral/Bege Elegante.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "floral-lavanda-minimalista",
+        "name":  "Lavanda minimalista",
+        "theme":  "Floral",
+        "subtheme":  "",
+        "fileUrl":  "backgrounds/library/Floral/Lavanda minimalista.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "floral-lavanda",
+        "name":  "Lavanda",
+        "theme":  "Floral",
+        "subtheme":  "",
+        "fileUrl":  "backgrounds/library/Floral/Lavanda.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "floral-rosas",
+        "name":  "Rosas",
+        "theme":  "Floral",
+        "subtheme":  "",
+        "fileUrl":  "backgrounds/library/Floral/Rosas.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "frutas-abacaxi",
+        "name":  "Abacaxi",
+        "theme":  "Frutas",
+        "subtheme":  "",
+        "fileUrl":  "backgrounds/library/Frutas/Abacaxi.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "frutas-cereja",
+        "name":  "Cereja",
+        "theme":  "Frutas",
+        "subtheme":  "",
+        "fileUrl":  "backgrounds/library/Frutas/Cereja.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "frutas-limao-siciliano",
+        "name":  "Limão Siciliano",
+        "theme":  "Frutas",
+        "subtheme":  "",
+        "fileUrl":  "backgrounds/library/Frutas/Limão Siciliano.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "frutas-morango",
+        "name":  "Morango",
+        "theme":  "Frutas",
+        "subtheme":  "",
+        "fileUrl":  "backgrounds/library/Frutas/Morango.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "pet-cat-lover-cat-1",
+        "name":  "Cat 1",
+        "theme":  "Pet",
+        "subtheme":  "Cat Lover",
+        "fileUrl":  "backgrounds/library/Pet/Cat Lover/Cat 1.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "pet-cat-lover-cat-2",
+        "name":  "Cat 2",
+        "theme":  "Pet",
+        "subtheme":  "Cat Lover",
+        "fileUrl":  "backgrounds/library/Pet/Cat Lover/Cat 2.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "pet-cat-lover-cat-cut",
+        "name":  "Cat Cut",
+        "theme":  "Pet",
+        "subtheme":  "Cat Lover",
+        "fileUrl":  "backgrounds/library/Pet/Cat Lover/Cat Cut.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "pet-dog-lover-dog-1",
+        "name":  "Dog 1",
+        "theme":  "Pet",
+        "subtheme":  "Dog Lover",
+        "fileUrl":  "backgrounds/library/Pet/Dog Lover/Dog 1.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "pet-dog-lover-dog-aquarela-rose",
+        "name":  "Dog Aquarela Rosê",
+        "theme":  "Pet",
+        "subtheme":  "Dog Lover",
+        "fileUrl":  "backgrounds/library/Pet/Dog Lover/Dog Aquarela Rosê.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "pet-dog-lover-dog-aquarela",
+        "name":  "Dog Aquarela",
+        "theme":  "Pet",
+        "subtheme":  "Dog Lover",
+        "fileUrl":  "backgrounds/library/Pet/Dog Lover/Dog Aquarela.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "pet-dog-lover-dog-cut",
+        "name":  "Dog Cut",
+        "theme":  "Pet",
+        "subtheme":  "Dog Lover",
+        "fileUrl":  "backgrounds/library/Pet/Dog Lover/Dog Cut.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-advogada-aquarela",
+        "name":  "Aquarela",
+        "theme":  "Profissões",
+        "subtheme":  "Advogada",
+        "fileUrl":  "backgrounds/library/Profissões/Advogada/Aquarela.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-advogada-cut-kawaii",
+        "name":  "Cut- Kawaii",
+        "theme":  "Profissões",
+        "subtheme":  "Advogada",
+        "fileUrl":  "backgrounds/library/Profissões/Advogada/Cut- Kawaii.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-arquiteta-aquarela",
+        "name":  "Aquarela",
+        "theme":  "Profissões",
+        "subtheme":  "Arquiteta",
+        "fileUrl":  "backgrounds/library/Profissões/Arquiteta/Aquarela.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-arquiteta-cut-kawaii",
+        "name":  "Cut Kawaii",
+        "theme":  "Profissões",
+        "subtheme":  "Arquiteta",
+        "fileUrl":  "backgrounds/library/Profissões/Arquiteta/Cut Kawaii.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-cabelereira-cut-kawaii",
+        "name":  "Cut - Kawaii",
+        "theme":  "Profissões",
+        "subtheme":  "Cabelereira",
+        "fileUrl":  "backgrounds/library/Profissões/Cabelereira/Cut - Kawaii.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-cabelereira-elegante",
+        "name":  "Elegante",
+        "theme":  "Profissões",
+        "subtheme":  "Cabelereira",
+        "fileUrl":  "backgrounds/library/Profissões/Cabelereira/Elegante.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-dentista-cut-kawaii",
+        "name":  "Cut -Kawaii",
+        "theme":  "Profissões",
+        "subtheme":  "Dentista",
+        "fileUrl":  "backgrounds/library/Profissões/Dentista/Cut -Kawaii.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-design-de-sobrancelhas-cut-kawaii",
+        "name":  "Cut -Kawaii",
+        "theme":  "Profissões",
+        "subtheme":  "Design de Sobrancelhas",
+        "fileUrl":  "backgrounds/library/Profissões/Design de Sobrancelhas/Cut -Kawaii.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-design-de-sobrancelhas-elegante",
+        "name":  "Elegante",
+        "theme":  "Profissões",
+        "subtheme":  "Design de Sobrancelhas",
+        "fileUrl":  "backgrounds/library/Profissões/Design de Sobrancelhas/Elegante.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-enfermeira-cut-kawaii",
+        "name":  "Cut -Kawaii",
+        "theme":  "Profissões",
+        "subtheme":  "Enfermeira",
+        "fileUrl":  "backgrounds/library/Profissões/Enfermeira/Cut -Kawaii.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-fisioterapeuta-cut-kawaii",
+        "name":  "Cut Kawaii",
+        "theme":  "Profissões",
+        "subtheme":  "Fisioterapeuta",
+        "fileUrl":  "backgrounds/library/Profissões/Fisioterapeuta/Cut Kawaii.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-fisioterapeuta-fisioterapeuta-capa",
+        "name":  "Fisioterapeuta Capa",
+        "theme":  "Profissões",
+        "subtheme":  "Fisioterapeuta",
+        "fileUrl":  "backgrounds/library/Profissões/Fisioterapeuta/Fisioterapeuta Capa.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-nail-design-manicure-aquarela",
+        "name":  "Aquarela",
+        "theme":  "Profissões",
+        "subtheme":  "Nail Design -Manicure",
+        "fileUrl":  "backgrounds/library/Profissões/Nail Design -Manicure/Aquarela.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-nail-design-manicure-classica",
+        "name":  "Clássica",
+        "theme":  "Profissões",
+        "subtheme":  "Nail Design -Manicure",
+        "fileUrl":  "backgrounds/library/Profissões/Nail Design -Manicure/Clássica.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-nail-design-manicure-kawaii",
+        "name":  "Kawaii",
+        "theme":  "Profissões",
+        "subtheme":  "Nail Design -Manicure",
+        "fileUrl":  "backgrounds/library/Profissões/Nail Design -Manicure/Kawaii.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-pisicologa-aquarela",
+        "name":  "Aquarela",
+        "theme":  "Profissões",
+        "subtheme":  "Pisicologa",
+        "fileUrl":  "backgrounds/library/Profissões/Pisicologa/Aquarela.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-pisicologa-cut-kawaii",
+        "name":  "Cut -Kawaii",
+        "theme":  "Profissões",
+        "subtheme":  "Pisicologa",
+        "fileUrl":  "backgrounds/library/Profissões/Pisicologa/Cut -Kawaii.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-professora-aquarela",
+        "name":  "Aquarela",
+        "theme":  "Profissões",
+        "subtheme":  "Professora",
+        "fileUrl":  "backgrounds/library/Profissões/Professora/Aquarela.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-professora-cut-kawaii",
+        "name":  "Cut Kawaii",
+        "theme":  "Profissões",
+        "subtheme":  "Professora",
+        "fileUrl":  "backgrounds/library/Profissões/Professora/Cut Kawaii.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-secretaria-recepcionista-aquarela",
+        "name":  "Aquarela",
+        "theme":  "Profissões",
+        "subtheme":  "Secretaria Recepcionista",
+        "fileUrl":  "backgrounds/library/Profissões/Secretaria Recepcionista/Aquarela.png",
+        "type":  "daily",
+        "side":  "both"
+    },
+    {
+        "id":  "profissoes-secretaria-recepcionista-cut-kawaii",
+        "name":  "Cut Kawaii",
+        "theme":  "Profissões",
+        "subtheme":  "Secretaria Recepcionista",
+        "fileUrl":  "backgrounds/library/Profissões/Secretaria Recepcionista/Cut Kawaii.png",
+        "type":  "daily",
+        "side":  "both"
+    }
+]
