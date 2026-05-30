@@ -2991,7 +2991,134 @@
         reader.readAsDataURL(file);
       });
 
-      els.exportPdf.addEventListener("click", () => window.print());
+      function getActiveBackgroundValue() {
+        if (els.background.value === "Upload do usuÃ¡rio" && state.uploadedBackground) {
+          return state.uploadedBackground;
+        }
+        if (els.background.value === "Banco de imagens do tema") {
+          return bankBackgrounds[els.bankBackground.value] || "";
+        }
+        return "";
+      }
+
+      function getPrintSamples(days, layout) {
+        if (layout === "two") {
+          return days.filter((_, index) => index % 2 === 0);
+        }
+        if (layout === "weekend") {
+          return days.filter((day) => day.getDay() !== 0);
+        }
+        return days;
+      }
+
+      function cloneCurrentSheetForPrint() {
+        const clone = els.sheet.cloneNode(true);
+        clone.removeAttribute("id");
+        clone.querySelectorAll("[id]").forEach((node) => node.removeAttribute("id"));
+        return clone.outerHTML;
+      }
+
+      function buildPrintPages() {
+        const originalSampleIndex = state.sampleIndex;
+        const originalPreviewMode = els.previewMode.value;
+        const originalSpread = els.spreadPreview.checked;
+        const year = Number(els.year.value) || new Date().getFullYear();
+        const days = getDays(year);
+        const layout = els.layout.value;
+        const pages = [];
+
+        els.spreadPreview.checked = false;
+        els.previewMode.value = "agenda";
+
+        getPrintSamples(days, layout).forEach((day) => {
+          const dayIndex = days.findIndex((item) => item.toDateString() === day.toDateString());
+          state.sampleIndex = Math.max(0, dayIndex);
+          update();
+          pages.push(`<section class="print-page">${cloneCurrentSheetForPrint()}</section>`);
+        });
+
+        if (els.finalPage.checked) {
+          pages.push(`<section class="print-page final-print-page"><div class="sheet ${els.theme.value}"><div class="content-block"><div class="month-art-page" style="display:grid"><div class="month-art-inner"><div class="month-art-bg" aria-hidden="true"></div><div class="month-art-content"><strong>Artiva Studio</strong><small>Miolo finalizado</small></div></div></div></div></div></section>`);
+        }
+
+        state.sampleIndex = originalSampleIndex;
+        els.previewMode.value = originalPreviewMode;
+        els.spreadPreview.checked = originalSpread;
+        update();
+        return pages.join("");
+      }
+
+      function exportFullPdf() {
+        update();
+        const styles = Array.from(document.querySelectorAll("style"))
+          .map((style) => style.textContent)
+          .join("\n");
+        const activeBackground = getActiveBackgroundValue();
+        const rootStyle = `
+          --preview-font: ${els.fontColor.value};
+          --preview-lines: ${els.lineColor.value};
+          --weekday-font: ${els.weekdayFont.value};
+          --weekday-color: ${els.weekdayColor.value};
+          --uploaded-bg-opacity: ${Number(els.backgroundOpacity.value) / 100};
+          --active-bg: ${activeBackground ? `url("${activeBackground}")` : "none"};
+          --decor-opacity: ${els.background.value === "Sem fundo" ? "0" : "0.9"};
+        `;
+        const printWindow = window.open("", "_blank");
+        if (!printWindow) {
+          alert("O navegador bloqueou a janela do PDF. Permita pop-ups para gerar o arquivo.");
+          return;
+        }
+
+        printWindow.document.write(`
+          <!doctype html>
+          <html lang="pt-BR">
+          <head>
+            <meta charset="utf-8">
+            <base href="${location.href}">
+            <title>Miolo de Agenda Artiva Studio</title>
+            <style>${styles}</style>
+            <style>
+              @page { size: A4 portrait; margin: 0; }
+              * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+              body { margin: 0; background: #fff; }
+              .print-page {
+                width: 210mm;
+                height: 297mm;
+                display: grid;
+                place-items: stretch;
+                page-break-after: always;
+                break-after: page;
+                overflow: hidden;
+              }
+              .print-page:last-child { page-break-after: auto; break-after: auto; }
+              .print-page .sheet {
+                width: 210mm !important;
+                height: 297mm !important;
+                min-height: 297mm !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+              }
+              .print-page .content-block {
+                min-height: calc(297mm - 42mm);
+              }
+            </style>
+          </head>
+          <body style="${rootStyle}">
+            ${buildPrintPages()}
+            <script>
+              window.addEventListener("load", () => {
+                setTimeout(() => window.print(), 700);
+              });
+            <\/script>
+          </body>
+          </html>
+        `);
+        printWindow.document.close();
+      }
+
+      els.exportPdf.addEventListener("click", exportFullPdf);
 
       fetch("backgrounds/catalog.json")
         .then((response) => (response.ok ? response.json() : []))
