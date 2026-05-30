@@ -3037,7 +3037,7 @@
           pages.push(`<section class="print-page">${cloneCurrentSheetForPrint()}</section>`);
         });
 
-        if (els.finalPage.checked) {
+        if (document.querySelector("#finalPage")?.checked) {
           pages.push(`<section class="print-page final-print-page"><div class="sheet ${els.theme.value}"><div class="content-block"><div class="month-art-page" style="display:grid"><div class="month-art-inner"><div class="month-art-bg" aria-hidden="true"></div><div class="month-art-content"><strong>Artiva Studio</strong><small>Miolo finalizado</small></div></div></div></div></div></section>`);
         }
 
@@ -3049,73 +3049,83 @@
       }
 
       function exportFullPdf() {
-        update();
-        const styles = Array.from(document.querySelectorAll("style"))
-          .map((style) => style.textContent)
-          .join("\n");
-        const activeBackground = getActiveBackgroundValue();
-        const rootStyle = `
-          --preview-font: ${els.fontColor.value};
-          --preview-lines: ${els.lineColor.value};
-          --weekday-font: ${els.weekdayFont.value};
-          --weekday-color: ${els.weekdayColor.value};
-          --uploaded-bg-opacity: ${Number(els.backgroundOpacity.value) / 100};
-          --active-bg: ${activeBackground ? `url("${activeBackground}")` : "none"};
-          --decor-opacity: ${els.background.value === "Sem fundo" ? "0" : "0.9"};
-        `;
-        const printWindow = window.open("", "_blank");
-        if (!printWindow) {
-          alert("O navegador bloqueou a janela do PDF. Permita pop-ups para gerar o arquivo.");
-          return;
-        }
+        try {
+          update();
+          const printWindow = window.open("", "_blank");
+          if (!printWindow) {
+            alert("O navegador bloqueou a janela do PDF. Permita pop-ups para gerar o arquivo.");
+            return;
+          }
+          printWindow.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Gerando PDF...</title></head><body style="font-family: Arial, sans-serif; padding: 32px;"><strong>Gerando o miolo...</strong><p>Aguarde alguns segundos.</p></body></html>`);
+          printWindow.document.close();
 
-        printWindow.document.write(`
-          <!doctype html>
-          <html lang="pt-BR">
-          <head>
-            <meta charset="utf-8">
-            <base href="${location.href}">
-            <title>Miolo de Agenda Artiva Studio</title>
-            <style>${styles}</style>
-            <style>
-              @page { size: A4 portrait; margin: 0; }
-              * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-              body { margin: 0; background: #fff; }
-              .print-page {
-                width: 210mm;
-                height: 297mm;
-                display: grid;
-                place-items: stretch;
-                page-break-after: always;
-                break-after: page;
-                overflow: hidden;
-              }
-              .print-page:last-child { page-break-after: auto; break-after: auto; }
-              .print-page .sheet {
-                width: 210mm !important;
-                height: 297mm !important;
-                min-height: 297mm !important;
-                border: 0 !important;
-                border-radius: 0 !important;
-                box-shadow: none !important;
-                margin: 0 !important;
-              }
-              .print-page .content-block {
-                min-height: calc(297mm - 42mm);
-              }
-            </style>
-          </head>
-          <body style="${rootStyle}">
-            ${buildPrintPages()}
-            <script>
-              window.addEventListener("load", () => {
-                setTimeout(() => window.print(), 700);
-              });
-            <\/script>
-          </body>
-          </html>
-        `);
-        printWindow.document.close();
+          const styles = Array.from(document.querySelectorAll("style"))
+            .map((style) => style.textContent)
+            .join("\n");
+          const activeBackground = getActiveBackgroundValue();
+          const rootStyle = `
+            --preview-font: ${els.fontColor.value};
+            --preview-lines: ${els.lineColor.value};
+            --weekday-font: ${els.weekdayFont.value};
+            --weekday-color: ${els.weekdayColor.value};
+            --uploaded-bg-opacity: ${Number(els.backgroundOpacity.value) / 100};
+            --active-bg: ${activeBackground ? `url("${activeBackground}")` : "none"};
+            --decor-opacity: ${els.background.value === "Sem fundo" ? "0" : "0.9"};
+          `;
+          const pagesHtml = buildPrintPages();
+
+          printWindow.document.open();
+          printWindow.document.write(`
+            <!doctype html>
+            <html lang="pt-BR">
+            <head>
+              <meta charset="utf-8">
+              <base href="${location.href}">
+              <title>Miolo de Agenda Artiva Studio</title>
+              <style>${styles}</style>
+              <style>
+                @page { size: A4 portrait; margin: 0; }
+                * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                body { margin: 0; background: #fff; }
+                .print-page {
+                  width: 210mm;
+                  height: 297mm;
+                  display: grid;
+                  place-items: stretch;
+                  page-break-after: always;
+                  break-after: page;
+                  overflow: hidden;
+                }
+                .print-page:last-child { page-break-after: auto; break-after: auto; }
+                .print-page .sheet {
+                  width: 210mm !important;
+                  height: 297mm !important;
+                  min-height: 297mm !important;
+                  border: 0 !important;
+                  border-radius: 0 !important;
+                  box-shadow: none !important;
+                  margin: 0 !important;
+                }
+                .print-page .content-block {
+                  min-height: calc(297mm - 42mm);
+                }
+              </style>
+            </head>
+            <body style="${rootStyle}">
+              ${pagesHtml}
+              <script>
+                window.addEventListener("load", () => {
+                  setTimeout(() => window.print(), 700);
+                });
+              <\/script>
+            </body>
+            </html>
+          `);
+          printWindow.document.close();
+        } catch (error) {
+          console.error(error);
+          alert("Não foi possível gerar o PDF agora. Atualize a página e tente novamente.");
+        }
       }
 
       els.exportPdf.addEventListener("click", exportFullPdf);
